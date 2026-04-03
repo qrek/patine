@@ -2,101 +2,57 @@ import { getSettings } from '@/lib/content'
 import ContactForm from './ContactForm'
 
 export const dynamic = 'force-dynamic'
-
-export const metadata = {
-  title: 'Contact — Patine',
-  description: 'Contactez l\'atelier Patine pour votre projet d\'encadrement artisanal à Paris.',
-}
+export const metadata = { title: 'Contact — Patine' }
 
 export default async function ContactPage() {
-  const settings = await getSettings()
+  const s = await getSettings()
 
   return (
-    <div className="pt-32 pb-28 px-6">
-      <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-20">
-          <span className="accent-line mx-auto mb-8" />
-          <h1
-            className="font-cormorant italic text-5xl md:text-6xl font-light tracking-wider text-[#1A1A18]"
-            style={{ fontFamily: 'var(--font-cormorant)' }}
-          >
-            Contact
-          </h1>
+    <div className="pt-14">
+      {/* En-tête */}
+      <div className="max-w-wide mx-auto px-6 lg:px-10 pt-16 pb-10 border-b border-border">
+        <p className="text-2xs tracking-caps uppercase text-muted mb-4">Nous contacter</p>
+        <h1 className="font-cormorant text-5xl md:text-6xl text-noir">Contact</h1>
+      </div>
+
+      <div className="max-w-wide mx-auto px-6 lg:px-10 py-16 grid md:grid-cols-2 gap-16 md:gap-24">
+        {/* Formulaire */}
+        <div>
+          <p className="text-2xs tracking-caps uppercase text-muted mb-8">Votre projet</p>
+          <ContactForm />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-16 md:gap-24">
-          {/* Formulaire */}
-          <div>
-            <p
-              className="text-xs tracking-widest uppercase text-[#B8A87A] mb-8"
-              style={{ fontFamily: 'var(--font-jost)', fontWeight: 300 }}
-            >
-              Votre projet
-            </p>
-            <ContactForm />
-          </div>
+        {/* Infos */}
+        <div className="space-y-10">
+          <p className="text-2xs tracking-caps uppercase text-muted">L'atelier</p>
 
-          {/* Adresse & infos */}
-          <div className="md:pl-8">
-            <p
-              className="text-xs tracking-widest uppercase text-[#B8A87A] mb-8"
-              style={{ fontFamily: 'var(--font-jost)', fontWeight: 300 }}
-            >
-              L'atelier
-            </p>
-
-            <div className="space-y-8">
-              {(settings.address.street || settings.address.city) && (
-                <div>
-                  <p
-                    className="text-[15px] leading-loose text-[#1A1A18]/80"
-                    style={{ fontFamily: 'var(--font-jost)', fontWeight: 300 }}
-                  >
-                    {settings.address.street && <span className="block">{settings.address.street}</span>}
-                    {settings.address.city && <span className="block">{settings.address.city}</span>}
-                    {settings.address.country && <span className="block">{settings.address.country}</span>}
-                  </p>
-                </div>
-              )}
-
-              {settings.email && (
-                <div>
-                  <p
-                    className="text-xs tracking-widest uppercase text-[#1A1A18]/40 mb-1"
-                    style={{ fontFamily: 'var(--font-jost)', fontWeight: 300 }}
-                  >
-                    Email
-                  </p>
-                  <a
-                    href={`mailto:${settings.email}`}
-                    className="text-[15px] text-[#1A1A18]/80 hover:text-[#B8A87A] transition-colors duration-300"
-                    style={{ fontFamily: 'var(--font-jost)', fontWeight: 300 }}
-                  >
-                    {settings.email}
-                  </a>
-                </div>
-              )}
-
-              {settings.phone && (
-                <div>
-                  <p
-                    className="text-xs tracking-widest uppercase text-[#1A1A18]/40 mb-1"
-                    style={{ fontFamily: 'var(--font-jost)', fontWeight: 300 }}
-                  >
-                    Téléphone
-                  </p>
-                  <a
-                    href={`tel:${settings.phone.replace(/\s/g, '')}`}
-                    className="text-[15px] text-[#1A1A18]/80 hover:text-[#B8A87A] transition-colors duration-300"
-                    style={{ fontFamily: 'var(--font-jost)', fontWeight: 300 }}
-                  >
-                    {settings.phone}
-                  </a>
-                </div>
-              )}
+          {(s.address.street || s.address.city) && (
+            <div>
+              <p className="text-2xs tracking-caps uppercase text-muted mb-2">Adresse</p>
+              <p className="text-[15px] text-noir leading-relaxed">
+                {s.address.street && <span className="block">{s.address.street}</span>}
+                {s.address.city && <span className="block">{s.address.city}</span>}
+              </p>
             </div>
-          </div>
+          )}
+
+          {s.email && (
+            <div>
+              <p className="text-2xs tracking-caps uppercase text-muted mb-2">Email</p>
+              <a href={`mailto:${s.email}`} className="text-[15px] text-noir hover:text-muted transition-colors duration-200">
+                {s.email}
+              </a>
+            </div>
+          )}
+
+          {s.phone && (
+            <div>
+              <p className="text-2xs tracking-caps uppercase text-muted mb-2">Téléphone</p>
+              <a href={`tel:${s.phone.replace(/\s/g,'')}`} className="text-[15px] text-noir hover:text-muted transition-colors duration-200">
+                {s.phone}
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -2,30 +2,33 @@ import type { Config } from 'tailwindcss'
 
 const config: Config = {
   content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './pages/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+    './app/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
       colors: {
-        cream: '#F7F5F2',
-        noir: '#1A1A18',
-        gold: '#B8A87A',
+        cream:  '#F5F3EF',
+        noir:   '#1C1C1A',
+        'noir-soft': '#3A3A38',
+        gold:   '#B8A87A',
+        muted:  '#8A8A84',
+        border: '#DDDBD6',
       },
       fontFamily: {
-        cormorant: ['var(--font-cormorant)', 'Georgia', 'serif'],
-        jost: ['var(--font-jost)', 'system-ui', 'sans-serif'],
+        cormorant: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        jost:      ['Jost', 'system-ui', 'sans-serif'],
+      },
+      fontSize: {
+        '2xs': '11px',
       },
       letterSpacing: {
-        widest2: '0.2em',
-        widest3: '0.3em',
-      },
-      transitionDuration: {
-        '800': '800ms',
+        caps: '0.12em',
       },
       maxWidth: {
-        prose680: '680px',
+        content: '680px',
+        wide:    '1160px',
       },
     },
   },

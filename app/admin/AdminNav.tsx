@@ -5,67 +5,61 @@ import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 
 const navItems = [
-  { href: '/admin', label: 'Accueil', icon: '⌂' },
-  { href: '/admin/accueil', label: 'Page d\'accueil', icon: '✦' },
-  { href: '/admin/savoir-faire', label: 'Savoir-faire', icon: '◈' },
-  { href: '/admin/realisations', label: 'Réalisations', icon: '⊞' },
-  { href: '/admin/parametres', label: 'Paramètres', icon: '⚙' },
+  { href: '/admin',             label: 'Tableau de bord', exact: true  },
+  { href: '/admin/accueil',     label: 'Accueil'                        },
+  { href: '/admin/savoir-faire',label: 'Savoir-faire'                   },
+  { href: '/admin/realisations',label: 'Réalisations'                   },
+  { href: '/admin/parametres',  label: 'Paramètres'                     },
 ]
 
 export default function AdminNav() {
   const pathname = usePathname()
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-56 bg-white border-r border-gray-200 flex flex-col z-20 hidden md:flex">
+    <aside className="fixed inset-y-0 left-0 w-52 bg-white border-r border-gray-100 flex flex-col hidden md:flex">
       {/* Logo */}
-      <div className="px-6 py-6 border-b border-gray-100">
-        <Link
-          href="/"
-          target="_blank"
-          className="font-cormorant italic text-xl text-[#1A1A18]"
-          style={{ fontFamily: 'var(--font-cormorant)' }}
-        >
-          Patine
+      <div className="px-6 py-5 border-b border-gray-100">
+        <Link href="/" target="_blank" className="block">
+          <span className="font-cormorant text-[18px] text-gray-900 leading-none">Patine</span>
+          <span className="block text-[10px] tracking-widest uppercase text-gray-400 mt-0.5">Backoffice</span>
         </Link>
-        <p className="text-[10px] text-gray-400 mt-0.5 tracking-widest uppercase">
-          Backoffice
-        </p>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 py-4 px-3">
-        <ul className="space-y-1">
-          {navItems.map((item) => {
-            const isActive =
-              item.href === '/admin'
-                ? pathname === '/admin'
-                : pathname.startsWith(item.href)
-            return (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded text-sm transition-colors duration-200 ${
-                    isActive
-                      ? 'bg-[#1A1A18] text-white'
-                      : 'text-gray-600 hover:bg-gray-100'
-                  }`}
-                >
-                  <span className="text-base">{item.icon}</span>
-                  {item.label}
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
+      <nav className="flex-1 py-3 px-3 overflow-y-auto">
+        {navItems.map(item => {
+          const active = item.exact
+            ? pathname === item.href
+            : pathname.startsWith(item.href)
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center h-9 px-3 rounded-md text-[13px] transition-colors duration-150 mb-0.5 ${
+                active
+                  ? 'bg-gray-900 text-white'
+                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+            >
+              {item.label}
+            </Link>
+          )
+        })}
       </nav>
 
-      {/* Déconnexion */}
-      <div className="px-3 py-4 border-t border-gray-100">
+      {/* Voir le site + déconnexion */}
+      <div className="px-3 py-4 border-t border-gray-100 space-y-0.5">
+        <Link
+          href="/"
+          target="_blank"
+          className="flex items-center h-9 px-3 rounded-md text-[13px] text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-colors duration-150"
+        >
+          Voir le site ↗
+        </Link>
         <button
           onClick={() => signOut({ callbackUrl: '/admin/login' })}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded text-sm text-gray-500 hover:bg-gray-100 transition-colors duration-200"
+          className="w-full flex items-center h-9 px-3 rounded-md text-[13px] text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-colors duration-150"
         >
-          <span>↩</span>
           Déconnexion
         </button>
       </div>

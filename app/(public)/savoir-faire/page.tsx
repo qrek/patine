@@ -2,75 +2,53 @@ import Image from 'next/image'
 import { getSavoirFaire } from '@/lib/content'
 
 export const dynamic = 'force-dynamic'
-
 export const metadata = {
   title: 'Notre Savoir-faire — Patine',
-  description: 'Découvrez le savoir-faire artisanal de l\'atelier Patine : choix des matières, processus, clientèle.',
 }
 
 export default async function SavoirFairePage() {
-  const content = await getSavoirFaire()
+  const { sections } = await getSavoirFaire()
 
   return (
-    <div className="pt-32 pb-28">
-      {/* Header */}
-      <div className="text-center px-6 mb-24">
-        <span className="accent-line mx-auto mb-8" />
-        <h1
-          className="font-cormorant italic text-5xl md:text-6xl font-light tracking-wider text-[#1A1A18]"
-          style={{ fontFamily: 'var(--font-cormorant)' }}
-        >
-          Notre Savoir-faire
+    <div className="pt-14">
+      {/* En-tête */}
+      <div className="max-w-wide mx-auto px-6 lg:px-10 pt-16 pb-10 border-b border-border">
+        <p className="text-2xs tracking-caps uppercase text-muted mb-4">Notre Savoir-faire</p>
+        <h1 className="font-cormorant text-5xl md:text-6xl text-noir">
+          L'art de l'encadrement
         </h1>
       </div>
 
       {/* Sections */}
-      <div className="max-w-[680px] mx-auto px-6 space-y-28">
-        {content.sections.map((section, i) => (
-          <article key={section.id} className="animate-fade-up">
-            {/* Section photo */}
-            {section.image && (
-              <figure className="w-screen relative left-1/2 -translate-x-1/2 mb-12 h-[50vh] md:h-[60vh] overflow-hidden">
-                <Image
-                  src={section.image}
-                  alt={section.title}
-                  fill
-                  className="object-cover"
-                />
-              </figure>
+      {sections.map((section, i) => (
+        <article key={section.id}>
+          {/* Photo pleine largeur */}
+          <div className="w-full aspect-[16/7] relative bg-border overflow-hidden">
+            {section.image ? (
+              <Image src={section.image} alt={section.title} fill className="object-cover" />
+            ) : (
+              <div className="absolute inset-0 bg-[#D8D6D1]" />
             )}
-            {!section.image && (
-              <figure className="w-screen relative left-1/2 -translate-x-1/2 mb-12 h-[50vh] md:h-[60vh] bg-[#D6D3CE]" />
-            )}
+          </div>
 
-            {/* Numéro */}
-            <p
-              className="text-xs tracking-widest uppercase text-[#B8A87A] mb-3"
-              style={{ fontFamily: 'var(--font-jost)', fontWeight: 300 }}
-            >
-              0{i + 1}
-            </p>
-
-            {/* Titre */}
-            <h2
-              className="font-cormorant text-3xl md:text-4xl font-light tracking-wide text-[#1A1A18] mb-6"
-              style={{ fontFamily: 'var(--font-cormorant)' }}
-            >
-              {section.title}
-            </h2>
-
-            <span className="accent-line mb-8" />
-
-            {/* Corps */}
-            <p
-              className="mt-8 text-[15px] leading-[1.9] text-[#1A1A18]/80"
-              style={{ fontFamily: 'var(--font-jost)', fontWeight: 300 }}
-            >
-              {section.body}
-            </p>
-          </article>
-        ))}
-      </div>
+          {/* Texte */}
+          <div className="max-w-wide mx-auto px-6 lg:px-10 py-14 border-b border-border">
+            <div className="grid md:grid-cols-[200px_1fr] gap-10">
+              <div>
+                <p className="text-2xs tracking-caps uppercase text-muted">0{i + 1}</p>
+              </div>
+              <div>
+                <h2 className="font-cormorant text-3xl md:text-4xl text-noir mb-6">
+                  {section.title}
+                </h2>
+                <p className="text-[15px] leading-relaxed text-noir-soft max-w-[540px]">
+                  {section.body}
+                </p>
+              </div>
+            </div>
+          </div>
+        </article>
+      ))}
     </div>
   )
 }
