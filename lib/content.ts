@@ -79,8 +79,12 @@ function writeJson(filename: string, data: unknown): void {
 
 async function kvGet<T>(key: string, fallback: T): Promise<T> {
   try {
-    const { kv } = await import('@vercel/kv')
-    const value = await kv.get<T>(key)
+    const { Redis } = await import('@upstash/redis')
+    const redis = new Redis({
+      url: process.env.KV_REST_API_URL!,
+      token: process.env.KV_REST_API_TOKEN!,
+    })
+    const value = await redis.get<T>(key)
     return value ?? fallback
   } catch {
     return fallback
@@ -88,8 +92,12 @@ async function kvGet<T>(key: string, fallback: T): Promise<T> {
 }
 
 async function kvSet(key: string, data: unknown): Promise<void> {
-  const { kv } = await import('@vercel/kv')
-  await kv.set(key, data)
+  const { Redis } = await import('@upstash/redis')
+  const redis = new Redis({
+    url: process.env.KV_REST_API_URL!,
+    token: process.env.KV_REST_API_TOKEN!,
+  })
+  await redis.set(key, data)
 }
 
 // ─── Getters ──────────────────────────────────────────────────────────────────
