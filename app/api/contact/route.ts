@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       await resend.emails.send({
         from: 'Patine <noreply@patine.fr>',
         to: contactEmail,
-        replyTo: body.email,
+        reply_to: body.email,
         subject: `Nouveau message de ${body.name}`,
         html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
