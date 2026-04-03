@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-cream: #F7F5F2;
+  --color-noir: #1A1A18;
+  --color-gold: #B8A87A;
+  --font-cormorant: 'Cormorant Garamond', Georgia, serif;
+  --font-jost: 'Jost', system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-cream);
+  color: var(--color-noir);
+  font-family: var(--font-jost);
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Typographie */
+h1, h2, h3, h4 {
+  font-family: var(--font-cormorant);
+  font-weight: 300;
+  letter-spacing: 0.08em;
+}
+
+/* Animations globales */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.8s ease forwards;
+}
+
+.animate-fade-up-delay-1 {
+  animation: fadeUp 0.8s ease 0.2s forwards;
+  opacity: 0;
+}
+
+.animate-fade-up-delay-2 {
+  animation: fadeUp 0.8s ease 0.4s forwards;
+  opacity: 0;
+}
+
+.animate-fade-up-delay-3 {
+  animation: fadeUp 0.8s ease 0.6s forwards;
+  opacity: 0;
+}
+
+/* Ligne accent */
+.accent-line {
+  width: 40px;
+  height: 1px;
+  background-color: var(--color-gold);
+  display: block;
+}
+
+/* Scrollbar discrète */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-cream);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold);
+  border-radius: 2px;
+}
+
+/* Floating labels */
+.floating-label-group {
+  position: relative;
+}
+.floating-label-group input,
+.floating-label-group textarea {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(26, 26, 24, 0.3);
+  border-radius: 0;
+  padding: 20px 0 8px 0;
+  width: 100%;
+  font-family: var(--font-jost);
+  font-weight: 300;
+  font-size: 15px;
+  color: var(--color-noir);
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+.floating-label-group input:focus,
+.floating-label-group textarea:focus {
+  border-bottom-color: var(--color-gold);
+}
+.floating-label-group label {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  font-family: var(--font-jost);
+  font-weight: 300;
+  font-size: 13px;
+  color: rgba(26, 26, 24, 0.5);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: all 0.25s ease;
+  pointer-events: none;
+}
+.floating-label-group input:focus + label,
+.floating-label-group input:not(:placeholder-shown) + label,
+.floating-label-group textarea:focus + label,
+.floating-label-group textarea:not(:placeholder-shown) + label {
+  top: 4px;
+  font-size: 10px;
+  color: var(--color-gold);
+}
