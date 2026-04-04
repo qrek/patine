@@ -49,6 +49,7 @@ export interface SettingsContent {
   phone: string
   instagram: string
   footer: string
+  logo: { src: string; width: number }
 }
 
 // ─── Helpers locaux ───────────────────────────────────────────────────────────
@@ -128,6 +129,7 @@ const settingsDefault: SettingsContent = {
   phone: '',
   instagram: '',
   footer: '© 2025 Patine',
+  logo: { src: '', width: 100 },
 }
 
 // ─── Getters ──────────────────────────────────────────────────────────────────

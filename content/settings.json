@@ -7,5 +7,6 @@
   "email": "contact@patine.fr",
   "phone": "+33 1 42 00 00 00",
   "instagram": "https://www.instagram.com/patine.paris",
-  "footer": "© 2025 Patine"
+  "footer": "© 2025 Patine",
+  "logo": { "src": "", "width": 100 }
 }
