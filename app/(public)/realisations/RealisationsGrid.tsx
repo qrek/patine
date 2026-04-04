@@ -34,8 +34,8 @@ function PhotoCard({ photo, index, onClick }: { photo: Photo; index: number; onC
       onClick={onClick}
       style={{
         opacity: 0,
-        transform: 'translateY(32px)',
-        transition: `opacity 0.7s ease ${(index % 4) * 0.1}s, transform 0.7s ease ${(index % 4) * 0.1}s`,
+        transform: 'translateY(28px)',
+        transition: `opacity 0.65s ease ${(index % 3) * 0.12}s, transform 0.65s ease ${(index % 3) * 0.12}s`,
       }}
       className="group relative overflow-hidden bg-[#D8D6D1] focus:outline-none w-full block"
       aria-label={photo.title || `Photo ${index + 1}`}
@@ -46,12 +46,12 @@ function PhotoCard({ photo, index, onClick }: { photo: Photo; index: number; onC
           alt={photo.title || ''}
           fill
           className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-          sizes="(max-width:640px) 100vw, 50vw"
+          sizes="(max-width:640px) 100vw, (max-width:1024px) 50vw, 33vw"
         />
       </div>
 
       {(photo.title || photo.caption) && (
-        <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-noir/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-noir/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           {photo.title   && <p className="font-cormorant text-lg text-cream">{photo.title}</p>}
           {photo.caption && <p className="text-[12px] text-cream/60 mt-0.5">{photo.caption}</p>}
         </div>
@@ -63,23 +63,28 @@ function PhotoCard({ photo, index, onClick }: { photo: Photo; index: number; onC
 export default function RealisationsGrid({ photos }: { photos: Photo[] }) {
   const [idx, setIdx] = useState<number | null>(null)
 
-  const left  = photos.filter((_, i) => i % 2 === 0)
-  const right = photos.filter((_, i) => i % 2 === 1)
+  const col0 = photos.filter((_, i) => i % 3 === 0)
+  const col1 = photos.filter((_, i) => i % 3 === 1)
+  const col2 = photos.filter((_, i) => i % 3 === 2)
 
   return (
     <>
-      <div className="max-w-[1000px] mx-auto px-6 lg:px-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-7">
-          {/* Colonne gauche */}
-          <div className="space-y-5 md:space-y-7">
-            {left.map((photo) => {
+      <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+          <div className="space-y-4 md:space-y-5">
+            {col0.map((photo) => {
               const i = photos.indexOf(photo)
               return <PhotoCard key={photo.id} photo={photo} index={i} onClick={() => setIdx(i)} />
             })}
           </div>
-          {/* Colonne droite — décalée vers le bas */}
-          <div className="space-y-5 md:space-y-7 sm:mt-20">
-            {right.map((photo) => {
+          <div className="space-y-4 md:space-y-5 sm:mt-14">
+            {col1.map((photo) => {
+              const i = photos.indexOf(photo)
+              return <PhotoCard key={photo.id} photo={photo} index={i} onClick={() => setIdx(i)} />
+            })}
+          </div>
+          <div className="space-y-4 md:space-y-5 lg:mt-28">
+            {col2.map((photo) => {
               const i = photos.indexOf(photo)
               return <PhotoCard key={photo.id} photo={photo} index={i} onClick={() => setIdx(i)} />
             })}

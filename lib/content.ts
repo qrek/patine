@@ -29,6 +29,8 @@ export interface SavoirFaireSection {
 
 export interface SavoirFaireContent {
   sections: SavoirFaireSection[]
+  heroImage: string
+  gallery: string[]
 }
 
 export interface RealisationPhoto {
@@ -99,6 +101,8 @@ const homeDefault: HomeContent = {
 }
 
 const sfDefault: SavoirFaireContent = {
+  heroImage: '',
+  gallery: ['', '', '', ''],
   sections: [
     {
       id: 'matieres',
