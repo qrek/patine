@@ -91,14 +91,32 @@ async function kvSet(key: string, data: unknown): Promise<void> {
 
 const homeDefault: HomeContent = {
   hero: { title: "L'art d'encadrer", subtitle: 'Atelier Patine — Paris', image: '' },
-  intro: { column1: '', column2: '' },
+  intro: {
+    column1: "Patine est un atelier d'encadrement artisanal fondé à Paris, dédié à la mise en valeur des œuvres d'art, photographies et créations qui vous sont chères.",
+    column2: "Chaque encadrement est pensé comme une œuvre en soi — le choix des matières, la précision du geste, l'harmonie des proportions. Un savoir-faire transmis, une attention portée à chaque détail.",
+  },
 }
 
 const sfDefault: SavoirFaireContent = {
   sections: [
-    { id: 'matieres',  title: 'Le Choix des matières', body: '', image: '' },
-    { id: 'processus', title: 'Le Processus',           body: '', image: '' },
-    { id: 'clientele', title: "Une clientèle d'exception", body: '', image: '' },
+    {
+      id: 'matieres',
+      title: 'Le Choix des matières',
+      body: "Baguettes en bois massif, passepartouts en carton muséal, verres anti-reflets ou conservation UV — chaque matériau est sélectionné pour sa qualité, sa durabilité et son rapport à l'œuvre encadrée. Nous travaillons exclusivement avec des fournisseurs européens partageant notre exigence.",
+      image: '',
+    },
+    {
+      id: 'processus',
+      title: 'Le Processus',
+      body: "De la première consultation à la pose finale, chaque étape est conduite avec soin. Nous prenons le temps d'écouter vos attentes, d'étudier l'œuvre sous différentes lumières, de proposer plusieurs combinaisons avant de poser le premier coup de coupe. Rien n'est laissé au hasard.",
+      image: '',
+    },
+    {
+      id: 'clientele',
+      title: "Une clientèle d'exception",
+      body: "Collectionneurs, galeries parisiennes, institutions culturelles et particuliers passionnés — nous avons le privilège d'accompagner des projets d'une grande diversité. Chaque client apporte sa vision, et nous mettons notre expertise au service de cette singularité.",
+      image: '',
+    },
   ],
 }
 

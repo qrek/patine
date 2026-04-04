@@ -4,9 +4,25 @@ import { authOptions } from '@/lib/auth'
 import { put } from '@vercel/blob'
 import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
+import sharp from 'sharp'
 
 const MAX_SIZE = 10 * 1024 * 1024 // 10 Mo
 const ALLOWED_EXTS = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif']
+
+async function compress(buffer: Buffer): Promise<{ data: Buffer; ext: string }> {
+  try {
+    const pipeline = sharp(buffer)
+    const meta = await pipeline.metadata()
+    let proc = sharp(buffer)
+    if (meta.width && meta.width > 1920) {
+      proc = proc.resize(1920, undefined, { withoutEnlargement: true })
+    }
+    const data = await proc.webp({ quality: 82 }).toBuffer()
+    return { data, ext: 'webp' }
+  } catch {
+    return { data: buffer, ext: 'jpg' }
+  }
+}
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
@@ -37,12 +53,17 @@ export async function POST(req: NextRequest) {
     }
 
     const safeDest = destination.replace(/[^a-zA-Z0-9-_]/g, '')
-    const filename = `${safeDest}-${Date.now()}.${ext}`
+    const inputBuffer = Buffer.from(await file.arrayBuffer())
+    const { data: outputBuffer, ext: outputExt } = await compress(inputBuffer)
+    const filename = `${safeDest}-${Date.now()}.${outputExt}`
 
     // Production : Vercel Blob (persistant)
     if (process.env.BLOB_READ_WRITE_TOKEN) {
       try {
-        const blob = await put(filename, file, { access: 'public' })
+        const blob = await put(filename, outputBuffer, {
+          access: 'public',
+          contentType: `image/${outputExt}`,
+        })
         return NextResponse.json({ path: blob.url })
       } catch (blobErr) {
         const msg = blobErr instanceof Error ? blobErr.message : String(blobErr)
@@ -55,12 +76,10 @@ export async function POST(req: NextRequest) {
     if (process.env.NODE_ENV !== 'production') {
       const uploadDir = path.join(process.cwd(), 'public', 'images')
       await mkdir(uploadDir, { recursive: true })
-      const bytes = await file.arrayBuffer()
-      await writeFile(path.join(uploadDir, filename), Buffer.from(bytes))
+      await writeFile(path.join(uploadDir, filename), outputBuffer)
       return NextResponse.json({ path: `/images/${filename}` })
     }
 
-    // Production sans Blob configuré
     return NextResponse.json(
       { error: 'Stockage non configuré — connectez Vercel Blob dans votre dashboard Vercel.' },
       { status: 503 }

@@ -13,23 +13,10 @@ export default async function RealisationsPage() {
   const sorted = [...content.photos].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
 
   return (
-    <div className="pt-28 pb-20">
-      {/* Header */}
-      <div className="text-center px-6 mb-16">
-        <span className="accent-line mx-auto mb-8" />
-        <h1
-          className="font-cormorant italic text-5xl md:text-6xl font-light tracking-wider text-[#1A1A18]"
-          style={{ fontFamily: 'var(--font-cormorant)' }}
-        >
-          Réalisations
-        </h1>
-      </div>
-
+    <div className="pt-20 pb-24">
       {sorted.length === 0 ? (
-        <div className="text-center py-20 text-[#1A1A18]/40">
-          <p style={{ fontFamily: 'var(--font-cormorant)', fontSize: '1.25rem' }}>
-            Les réalisations arrivent bientôt.
-          </p>
+        <div className="text-center py-32 text-noir/30">
+          <p className="font-cormorant text-xl">Les réalisations arrivent bientôt.</p>
         </div>
       ) : (
         <RealisationsGrid photos={sorted} />

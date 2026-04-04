@@ -11,13 +11,15 @@ const links = [
 ]
 
 export default function Nav() {
-  const [scrolled, setScrolled]   = useState(false)
-  const [menuOpen, setMenuOpen]   = useState(false)
-  const pathname = usePathname()
-  const isHome   = pathname === '/'
+  const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const pathname  = usePathname()
+  const isHome    = pathname === '/'
+  const transparent = isHome && !scrolled
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40)
+    fn()
     window.addEventListener('scroll', fn, { passive: true })
     return () => window.removeEventListener('scroll', fn)
   }, [])
@@ -28,7 +30,7 @@ export default function Nav() {
     <>
       <header
         className={`fixed top-0 inset-x-0 z-50 transition-colors duration-300 ${
-          scrolled || !isHome ? 'bg-cream border-b border-border' : 'bg-transparent'
+          transparent ? 'bg-transparent' : 'bg-cream border-b border-border'
         }`}
       >
         <div className="max-w-wide mx-auto px-6 lg:px-10 h-14 flex items-center justify-between">
@@ -36,7 +38,9 @@ export default function Nav() {
           {/* Logo */}
           <Link
             href="/"
-            className="font-cormorant text-[22px] tracking-tight leading-none text-noir hover:text-muted transition-colors duration-200"
+            className={`font-cormorant text-[22px] tracking-tight leading-none transition-colors duration-300 ${
+              transparent ? 'text-cream hover:text-cream/70' : 'text-noir hover:text-muted'
+            }`}
           >
             Patine
           </Link>
@@ -47,8 +51,10 @@ export default function Nav() {
               <Link
                 key={l.href}
                 href={l.href}
-                className={`text-2xs tracking-caps uppercase transition-colors duration-200 ${
-                  pathname.startsWith(l.href) ? 'text-noir' : 'text-muted hover:text-noir'
+                className={`text-2xs tracking-caps uppercase transition-colors duration-300 ${
+                  transparent
+                    ? pathname.startsWith(l.href) ? 'text-cream' : 'text-cream/70 hover:text-cream'
+                    : pathname.startsWith(l.href) ? 'text-noir'  : 'text-muted hover:text-noir'
                 }`}
               >
                 {l.label}
@@ -62,9 +68,9 @@ export default function Nav() {
             onClick={() => setMenuOpen(o => !o)}
             aria-label="Menu"
           >
-            <span className={`block h-px bg-noir transition-all duration-300 origin-center ${menuOpen ? 'rotate-45 translate-y-[10px]' : ''}`} />
-            <span className={`block h-px bg-noir transition-opacity duration-200 ${menuOpen ? 'opacity-0' : ''}`} />
-            <span className={`block h-px bg-noir transition-all duration-300 origin-center ${menuOpen ? '-rotate-45 -translate-y-[10px]' : ''}`} />
+            <span className={`block h-px transition-all duration-300 origin-center ${transparent ? 'bg-cream' : 'bg-noir'} ${menuOpen ? 'rotate-45 translate-y-[10px]' : ''}`} />
+            <span className={`block h-px transition-all duration-200 ${transparent ? 'bg-cream' : 'bg-noir'} ${menuOpen ? 'opacity-0' : ''}`} />
+            <span className={`block h-px transition-all duration-300 origin-center ${transparent ? 'bg-cream' : 'bg-noir'} ${menuOpen ? '-rotate-45 -translate-y-[10px]' : ''}`} />
           </button>
         </div>
       </header>
