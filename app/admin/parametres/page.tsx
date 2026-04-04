@@ -9,7 +9,7 @@ interface Settings {
   phone: string
   instagram: string
   footer: string
-  logo: { src: string; width: number }
+  logo: { src: string; srcDark: string; width: number }
 }
 
 const DEFAULT: Settings = {
@@ -18,7 +18,7 @@ const DEFAULT: Settings = {
   phone: '',
   instagram: '',
   footer: '© 2025 Patine',
-  logo: { src: '', width: 100 },
+  logo: { src: '', srcDark: '', width: 100 },
 }
 
 export default function AdminParametres() {
@@ -28,7 +28,7 @@ export default function AdminParametres() {
   useEffect(() => {
     fetch('/api/admin/get?section=settings')
       .then((r) => r.json())
-      .then((d) => setSettings({ ...DEFAULT, ...d, logo: { ...DEFAULT.logo, ...(d.logo ?? {}) } }))
+      .then((d) => setSettings({ ...DEFAULT, ...d, logo: { ...DEFAULT.logo, ...(d.logo ?? {}) } as Settings['logo'] }))
       .catch(() => {})
   }, [])
 
@@ -65,23 +65,24 @@ export default function AdminParametres() {
         <section className="bg-white rounded-lg border border-gray-200 p-6 space-y-5">
           <h2 className="text-sm font-medium text-gray-700 border-b border-gray-100 pb-3">Logo</h2>
 
-          <div>
-            <label className="block text-xs text-gray-500 mb-2">Image du logo</label>
-            <ImageUpload
-              value={settings.logo.src}
-              onChange={(url) => setLogo('src', url)}
-              destination="logo"
-            />
-            {settings.logo.src && (
-              <button
-                type="button"
-                onClick={() => setLogo('src', '')}
-                className="mt-2 text-xs text-gray-400 hover:text-red-400 transition-colors"
-              >
-                Supprimer le logo → afficher le nom texte
-              </button>
-            )}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs text-gray-500 mb-2">Logo — fond clair (noir)</label>
+              <ImageUpload value={settings.logo.src} onChange={(url) => setLogo('src', url)} destination="logo-light" />
+              <p className="text-[10px] text-gray-300 mt-1">Visible dans la nav après scroll</p>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-2">Logo — fond sombre (blanc)</label>
+              <ImageUpload value={settings.logo.srcDark} onChange={(url) => setLogo('srcDark', url)} destination="logo-dark" />
+              <p className="text-[10px] text-gray-300 mt-1">Visible sur le hero de l'accueil</p>
+            </div>
           </div>
+          {(settings.logo.src || settings.logo.srcDark) && (
+            <button type="button" onClick={() => { setLogo('src', ''); setLogo('srcDark', '') }}
+              className="text-xs text-gray-400 hover:text-red-400 transition-colors">
+              Supprimer les logos → afficher le nom texte
+            </button>
+          )}
 
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -104,27 +105,35 @@ export default function AdminParametres() {
           </div>
 
           {/* Aperçu */}
-          <div>
-            <p className="text-xs text-gray-500 mb-2">Aperçu</p>
-            <div className="bg-[#1C1C1A] rounded px-6 py-4 flex items-center">
-              {settings.logo.src ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={settings.logo.src}
-                  alt="logo"
-                  style={{ width: settings.logo.width, height: 'auto' }}
-                  className="object-contain brightness-0 invert"
-                />
-              ) : (
-                <span
-                  className="font-cormorant text-cream leading-none"
-                  style={{ fontSize: Math.max(settings.logo.width * 0.3, 22) }}
-                >
-                  Patine
-                </span>
-              )}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <p className="text-[10px] text-gray-400 mb-1.5">Sur fond sombre (hero)</p>
+              <div className="bg-[#1C1C1A] rounded px-4 py-3 flex items-center min-h-[52px]">
+                {settings.logo.srcDark ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={settings.logo.srcDark} alt="logo" style={{ width: settings.logo.width, height: 'auto' }} className="object-contain" />
+                ) : settings.logo.src ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={settings.logo.src} alt="logo" style={{ width: settings.logo.width, height: 'auto' }} className="object-contain brightness-0 invert" />
+                ) : (
+                  <span className="font-cormorant text-cream leading-none" style={{ fontSize: Math.max(settings.logo.width * 0.3, 22) }}>Patine</span>
+                )}
+              </div>
             </div>
-            <p className="text-[10px] text-gray-300 mt-1.5">Aperçu sur fond sombre (hero)</p>
+            <div>
+              <p className="text-[10px] text-gray-400 mb-1.5">Sur fond clair (nav scrollée)</p>
+              <div className="bg-[#F5F3EF] border border-gray-100 rounded px-4 py-3 flex items-center min-h-[52px]">
+                {settings.logo.src ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={settings.logo.src} alt="logo" style={{ width: settings.logo.width, height: 'auto' }} className="object-contain" />
+                ) : settings.logo.srcDark ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={settings.logo.srcDark} alt="logo" style={{ width: settings.logo.width, height: 'auto' }} className="object-contain brightness-0" />
+                ) : (
+                  <span className="font-cormorant text-noir leading-none" style={{ fontSize: Math.max(settings.logo.width * 0.3, 22) }}>Patine</span>
+                )}
+              </div>
+            </div>
           </div>
         </section>
 

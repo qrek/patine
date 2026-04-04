@@ -6,7 +6,7 @@ export default async function PublicLayout({ children }: { children: React.React
   const s = await getSettings()
   return (
     <div className="flex flex-col min-h-screen">
-      <Nav logoSrc={s.logo?.src ?? ''} logoWidth={s.logo?.width ?? 100} />
+      <Nav logoSrc={s.logo?.src ?? ''} logoSrcDark={s.logo?.srcDark ?? ''} logoWidth={s.logo?.width ?? 100} />
       <main className="flex-1">{children}</main>
       <Footer
         text={s.footer}

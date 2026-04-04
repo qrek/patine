@@ -8,5 +8,5 @@
   "phone": "+33 1 42 00 00 00",
   "instagram": "https://www.instagram.com/patine.paris",
   "footer": "© 2025 Patine",
-  "logo": { "src": "", "width": 100 }
+  "logo": { "src": "", "srcDark": "", "width": 100 }
 }
