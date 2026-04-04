@@ -1,3 +1,32 @@
 {
-  "photos": []
+  "photos": [
+    {
+      "id": "1",
+      "src": "/images/realisation-1.jpg",
+      "alt": "Photographie encadrée — salle de réunion",
+      "caption": "",
+      "order": 1
+    },
+    {
+      "id": "2",
+      "src": "/images/realisation-2.jpg",
+      "alt": "Photographie encadrée — couloir",
+      "caption": "",
+      "order": 2
+    },
+    {
+      "id": "3",
+      "src": "/images/realisation-3.jpg",
+      "alt": "Photographie encadrée — couloir vitré",
+      "caption": "",
+      "order": 3
+    },
+    {
+      "id": "4",
+      "src": "/images/realisation-4.jpg",
+      "alt": "Photographie encadrée — boutique Ami",
+      "caption": "",
+      "order": 4
+    }
+  ]
 }
