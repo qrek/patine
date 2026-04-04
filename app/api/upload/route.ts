@@ -41,8 +41,14 @@ export async function POST(req: NextRequest) {
 
     // Production : Vercel Blob (persistant)
     if (process.env.BLOB_READ_WRITE_TOKEN) {
-      const blob = await put(filename, file, { access: 'public' })
-      return NextResponse.json({ path: blob.url })
+      try {
+        const blob = await put(filename, file, { access: 'public' })
+        return NextResponse.json({ path: blob.url })
+      } catch (blobErr) {
+        const msg = blobErr instanceof Error ? blobErr.message : String(blobErr)
+        console.error('[upload] Blob error:', msg)
+        return NextResponse.json({ error: `Blob: ${msg}` }, { status: 500 })
+      }
     }
 
     // Développement : fichier local
