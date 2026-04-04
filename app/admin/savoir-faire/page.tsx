@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, FormEvent } from 'react'
-import Image from 'next/image'
+import ImageUpload from '@/components/ImageUpload'
 
 interface Section {
   id: string
@@ -10,44 +10,33 @@ interface Section {
   image: string
 }
 
+const DEFAULT_SECTIONS: Section[] = [
+  { id: 'matieres',  title: 'Le Choix des matières',    body: '', image: '' },
+  { id: 'processus', title: 'Le Processus',              body: '', image: '' },
+  { id: 'clientele', title: "Une clientèle d'exception", body: '', image: '' },
+]
+
 const SECTION_LABELS: Record<string, string> = {
-  matieres: 'Le Choix des matières',
+  matieres:  'Le Choix des matières',
   processus: 'Le Processus',
-  clientele: 'Une clientèle d\'exception',
+  clientele: "Une clientèle d'exception",
 }
 
 export default function AdminSavoirFaire() {
-  const [sections, setSections] = useState<Section[]>([])
+  const [sections, setSections] = useState<Section[]>(DEFAULT_SECTIONS)
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
-  const [uploading, setUploading] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/admin/get?section=savoir-faire')
       .then((r) => r.json())
-      .then((d) => setSections(d.sections ?? []))
+      .then((d) => {
+        if (d.sections && d.sections.length > 0) setSections(d.sections)
+      })
       .catch(() => {})
   }, [])
 
   function updateSection(id: string, field: keyof Section, value: string) {
-    setSections((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, [field]: value } : s))
-    )
-  }
-
-  async function handleImageUpload(sectionId: string, e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setUploading(sectionId)
-    const fd = new FormData()
-    fd.append('file', file)
-    fd.append('destination', `savoir-faire-${sectionId}`)
-    try {
-      const res = await fetch('/api/upload', { method: 'POST', body: fd })
-      const data = await res.json()
-      if (data.path) updateSection(sectionId, 'image', data.path)
-    } finally {
-      setUploading(null)
-    }
+    setSections((prev) => prev.map((s) => (s.id === id ? { ...s, [field]: value } : s)))
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -100,29 +89,11 @@ export default function AdminSavoirFaire() {
 
             <div>
               <label className="block text-xs text-gray-500 mb-2">Photo</label>
-              <div className="flex items-start gap-4">
-                {section.image && (
-                  <div className="relative w-20 h-14 rounded overflow-hidden flex-shrink-0 bg-gray-100">
-                    <Image src={section.image} alt={section.title} fill className="object-cover" />
-                  </div>
-                )}
-                <div>
-                  <label
-                    htmlFor={`upload-${section.id}`}
-                    className="inline-block cursor-pointer text-xs px-4 py-2 border border-gray-300 rounded text-gray-600 hover:border-[#B8A87A] hover:text-[#B8A87A] transition-colors"
-                  >
-                    {uploading === section.id ? 'Upload…' : 'Choisir une image'}
-                  </label>
-                  <input
-                    id={`upload-${section.id}`}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => handleImageUpload(section.id, e)}
-                    disabled={uploading !== null}
-                  />
-                </div>
-              </div>
+              <ImageUpload
+                value={section.image}
+                onChange={(url) => updateSection(section.id, 'image', url)}
+                destination={`savoir-faire-${section.id}`}
+              />
             </div>
           </section>
         ))}

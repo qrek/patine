@@ -28,12 +28,6 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      <div className="mt-8 p-4 bg-amber-50 border border-amber-100 rounded-lg">
-        <p className="text-[12px] text-amber-700">
-          <strong className="font-medium">Rappel :</strong> en production, le contenu est stocké dans Vercel KV.
-          Configurez le store KV dans votre dashboard Vercel si ce n'est pas encore fait.
-        </p>
-      </div>
     </div>
   )
 }

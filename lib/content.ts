@@ -1,26 +1,23 @@
 /**
  * Couche d'abstraction pour la lecture/écriture du contenu.
  * En développement : lecture/écriture dans /content/*.json
- * En production (Vercel) : utilise Vercel KV
+ * En production (Vercel) : utilise Upstash Redis
  */
 
 import fs from 'fs'
 import path from 'path'
 
-const isProduction = process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL
+// Support des deux conventions de nommage (Vercel KV legacy + Upstash marketplace)
+const kvUrl   = process.env.KV_REST_API_URL   ?? process.env.UPSTASH_REDIS_REST_URL
+const kvToken = process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN
+
+const isProduction = process.env.NODE_ENV === 'production' && !!kvUrl
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface HomeContent {
-  hero: {
-    title: string
-    subtitle: string
-    image: string
-  }
-  intro: {
-    column1: string
-    column2: string
-  }
+  hero: { title: string; subtitle: string; image: string }
+  intro: { column1: string; column2: string }
 }
 
 export interface SavoirFaireSection {
@@ -47,11 +44,7 @@ export interface RealisationsContent {
 }
 
 export interface SettingsContent {
-  address: {
-    street: string
-    city: string
-    country: string
-  }
+  address: { street: string; city: string; country: string }
   email: string
   phone: string
   instagram: string
@@ -80,10 +73,7 @@ function writeJson(filename: string, data: unknown): void {
 async function kvGet<T>(key: string, fallback: T): Promise<T> {
   try {
     const { Redis } = await import('@upstash/redis')
-    const redis = new Redis({
-      url: process.env.KV_REST_API_URL!,
-      token: process.env.KV_REST_API_TOKEN!,
-    })
+    const redis = new Redis({ url: kvUrl!, token: kvToken! })
     const value = await redis.get<T>(key)
     return value ?? fallback
   } catch {
@@ -93,38 +83,26 @@ async function kvGet<T>(key: string, fallback: T): Promise<T> {
 
 async function kvSet(key: string, data: unknown): Promise<void> {
   const { Redis } = await import('@upstash/redis')
-  const redis = new Redis({
-    url: process.env.KV_REST_API_URL!,
-    token: process.env.KV_REST_API_TOKEN!,
-  })
+  const redis = new Redis({ url: kvUrl!, token: kvToken! })
   await redis.set(key, data)
 }
 
-// ─── Getters ──────────────────────────────────────────────────────────────────
+// ─── Defaults ─────────────────────────────────────────────────────────────────
 
 const homeDefault: HomeContent = {
-  hero: { title: "L'art d'encadrer", subtitle: 'Atelier Patine — Paris', image: '/images/hero.jpg' },
+  hero: { title: "L'art d'encadrer", subtitle: 'Atelier Patine — Paris', image: '' },
   intro: { column1: '', column2: '' },
 }
 
-export async function getHome(): Promise<HomeContent> {
-  if (isProduction) return kvGet('home', homeDefault)
-  return readJson('home.json', homeDefault)
-}
-
-const sfDefault: SavoirFaireContent = { sections: [] }
-
-export async function getSavoirFaire(): Promise<SavoirFaireContent> {
-  if (isProduction) return kvGet('savoir-faire', sfDefault)
-  return readJson('savoir-faire.json', sfDefault)
+const sfDefault: SavoirFaireContent = {
+  sections: [
+    { id: 'matieres',  title: 'Le Choix des matières', body: '', image: '' },
+    { id: 'processus', title: 'Le Processus',           body: '', image: '' },
+    { id: 'clientele', title: "Une clientèle d'exception", body: '', image: '' },
+  ],
 }
 
 const realisationsDefault: RealisationsContent = { photos: [] }
-
-export async function getRealisations(): Promise<RealisationsContent> {
-  if (isProduction) return kvGet('realisations', realisationsDefault)
-  return readJson('realisations.json', realisationsDefault)
-}
 
 const settingsDefault: SettingsContent = {
   address: { street: '', city: '', country: '' },
@@ -132,6 +110,23 @@ const settingsDefault: SettingsContent = {
   phone: '',
   instagram: '',
   footer: '© 2025 Patine',
+}
+
+// ─── Getters ──────────────────────────────────────────────────────────────────
+
+export async function getHome(): Promise<HomeContent> {
+  if (isProduction) return kvGet('home', homeDefault)
+  return readJson('home.json', homeDefault)
+}
+
+export async function getSavoirFaire(): Promise<SavoirFaireContent> {
+  if (isProduction) return kvGet('savoir-faire', sfDefault)
+  return readJson('savoir-faire.json', sfDefault)
+}
+
+export async function getRealisations(): Promise<RealisationsContent> {
+  if (isProduction) return kvGet('realisations', realisationsDefault)
+  return readJson('realisations.json', realisationsDefault)
 }
 
 export async function getSettings(): Promise<SettingsContent> {

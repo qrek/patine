@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, FormEvent } from 'react'
-import Image from 'next/image'
+import ImageUpload from '@/components/ImageUpload'
 
 interface HomeContent {
   hero: { title: string; subtitle: string; image: string }
@@ -14,7 +14,6 @@ export default function AdminAccueil() {
     intro: { column1: '', column2: '' },
   })
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
-  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     fetch('/api/admin/get?section=home')
@@ -22,24 +21,6 @@ export default function AdminAccueil() {
       .then((d) => setContent(d))
       .catch(() => {})
   }, [])
-
-  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setUploading(true)
-    const fd = new FormData()
-    fd.append('file', file)
-    fd.append('destination', 'hero')
-    try {
-      const res = await fetch('/api/upload', { method: 'POST', body: fd })
-      const data = await res.json()
-      if (data.path) {
-        setContent((c) => ({ ...c, hero: { ...c.hero, image: data.path } }))
-      }
-    } finally {
-      setUploading(false)
-    }
-  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -73,9 +54,7 @@ export default function AdminAccueil() {
             <input
               type="text"
               value={content.hero.title}
-              onChange={(e) =>
-                setContent((c) => ({ ...c, hero: { ...c.hero, title: e.target.value } }))
-              }
+              onChange={(e) => setContent((c) => ({ ...c, hero: { ...c.hero, title: e.target.value } }))}
               className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#B8A87A] transition-colors"
             />
           </div>
@@ -85,39 +64,18 @@ export default function AdminAccueil() {
             <input
               type="text"
               value={content.hero.subtitle}
-              onChange={(e) =>
-                setContent((c) => ({ ...c, hero: { ...c.hero, subtitle: e.target.value } }))
-              }
+              onChange={(e) => setContent((c) => ({ ...c, hero: { ...c.hero, subtitle: e.target.value } }))}
               className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#B8A87A] transition-colors"
             />
           </div>
 
           <div>
             <label className="block text-xs text-gray-500 mb-2">Image hero</label>
-            <div className="flex items-start gap-4">
-              {content.hero.image && (
-                <div className="relative w-24 h-16 rounded overflow-hidden flex-shrink-0 bg-gray-100">
-                  <Image src={content.hero.image} alt="Hero" fill className="object-cover" />
-                </div>
-              )}
-              <div>
-                <label
-                  htmlFor="hero-upload"
-                  className="inline-block cursor-pointer text-xs px-4 py-2 border border-gray-300 rounded text-gray-600 hover:border-[#B8A87A] hover:text-[#B8A87A] transition-colors"
-                >
-                  {uploading ? 'Upload…' : 'Choisir une image'}
-                </label>
-                <input
-                  id="hero-upload"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageUpload}
-                  disabled={uploading}
-                />
-                <p className="text-xs text-gray-400 mt-1.5">JPG, PNG, WebP — max 5 Mo</p>
-              </div>
-            </div>
+            <ImageUpload
+              value={content.hero.image}
+              onChange={(url) => setContent((c) => ({ ...c, hero: { ...c.hero, image: url } }))}
+              destination="hero"
+            />
           </div>
         </section>
 
@@ -132,9 +90,7 @@ export default function AdminAccueil() {
             <textarea
               rows={5}
               value={content.intro.column1}
-              onChange={(e) =>
-                setContent((c) => ({ ...c, intro: { ...c.intro, column1: e.target.value } }))
-              }
+              onChange={(e) => setContent((c) => ({ ...c, intro: { ...c.intro, column1: e.target.value } }))}
               className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#B8A87A] transition-colors resize-none"
             />
           </div>
@@ -144,9 +100,7 @@ export default function AdminAccueil() {
             <textarea
               rows={5}
               value={content.intro.column2}
-              onChange={(e) =>
-                setContent((c) => ({ ...c, intro: { ...c.intro, column2: e.target.value } }))
-              }
+              onChange={(e) => setContent((c) => ({ ...c, intro: { ...c.intro, column2: e.target.value } }))}
               className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#B8A87A] transition-colors resize-none"
             />
           </div>

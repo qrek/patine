@@ -24,36 +24,44 @@ export async function POST(req: NextRequest) {
     }
 
     if (file.size > MAX_SIZE) {
-      return NextResponse.json({ error: 'File too large (max 10 Mo)' }, { status: 413 })
+      return NextResponse.json({ error: 'Fichier trop volumineux (max 10 Mo)' }, { status: 413 })
     }
 
     if (!file.type.startsWith('image/')) {
-      return NextResponse.json({ error: 'File must be an image' }, { status: 400 })
+      return NextResponse.json({ error: 'Le fichier doit être une image' }, { status: 400 })
     }
 
     const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
     if (!ALLOWED_EXTS.includes(ext)) {
-      return NextResponse.json({ error: 'Invalid file type' }, { status: 400 })
+      return NextResponse.json({ error: 'Format non supporté' }, { status: 400 })
     }
 
     const safeDest = destination.replace(/[^a-zA-Z0-9-_]/g, '')
     const filename = `${safeDest}-${Date.now()}.${ext}`
 
-    // En production : Vercel Blob (persistant)
+    // Production : Vercel Blob (persistant)
     if (process.env.BLOB_READ_WRITE_TOKEN) {
       const blob = await put(filename, file, { access: 'public' })
       return NextResponse.json({ path: blob.url })
     }
 
-    // En développement : fichier local
-    const uploadDir = path.join(process.cwd(), 'public', 'images')
-    await mkdir(uploadDir, { recursive: true })
-    const bytes = await file.arrayBuffer()
-    await writeFile(path.join(uploadDir, filename), Buffer.from(bytes))
-    return NextResponse.json({ path: `/images/${filename}` })
+    // Développement : fichier local
+    if (process.env.NODE_ENV !== 'production') {
+      const uploadDir = path.join(process.cwd(), 'public', 'images')
+      await mkdir(uploadDir, { recursive: true })
+      const bytes = await file.arrayBuffer()
+      await writeFile(path.join(uploadDir, filename), Buffer.from(bytes))
+      return NextResponse.json({ path: `/images/${filename}` })
+    }
+
+    // Production sans Blob configuré
+    return NextResponse.json(
+      { error: 'Stockage non configuré — connectez Vercel Blob dans votre dashboard Vercel.' },
+      { status: 503 }
+    )
 
   } catch (err) {
     console.error('[upload] Error:', err)
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
+    return NextResponse.json({ error: "Erreur lors de l'upload" }, { status: 500 })
   }
 }
