@@ -18,7 +18,7 @@ export default function LoginPage() {
     const password = (form.elements.namedItem('password') as HTMLInputElement).value
     const result = await signIn('credentials', { email, password, redirect: false })
     if (result?.ok) {
-      router.push('/admin')
+      window.location.href = '/admin'
     } else {
       setError('Identifiants incorrects.')
       setLoading(false)
