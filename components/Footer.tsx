@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 
 interface FooterProps {
@@ -14,14 +13,14 @@ interface FooterProps {
 
 export default function Footer({ text, instagram, email, phone, hours, address, logoSrc, logoWidth = 100 }: FooterProps) {
   return (
-    <footer className="border-t border-border bg-cream">
+    <footer className="border-t border-border bg-cream w-full">
 
       {/* ── Bande principale ── */}
-      <div className="max-w-wide mx-auto px-5 lg:px-8 py-6">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-y-6 gap-x-6 items-start">
+      <div className="w-full max-w-wide mx-auto px-5 lg:px-8 py-8 md:py-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-4 items-start">
 
           {/* Logo / nom */}
-          <div className="col-span-1">
+          <div>
             {logoSrc ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -37,7 +36,7 @@ export default function Footer({ text, instagram, email, phone, hours, address, 
 
           {/* Adresse */}
           {address && (address.street || address.city) && (
-            <div className="col-span-1">
+            <div>
               <p className="text-[13px] text-noir leading-relaxed whitespace-pre-line">
                 {[address.street, address.city].filter(Boolean).join('\n')}
               </p>
@@ -46,14 +45,14 @@ export default function Footer({ text, instagram, email, phone, hours, address, 
 
           {/* Horaires */}
           {hours && (
-            <div className="col-span-1">
+            <div>
               <p className="text-[13px] text-noir leading-relaxed whitespace-pre-line">{hours}</p>
             </div>
           )}
 
           {/* Email + Tél */}
           {(email || phone) && (
-            <div className="col-span-1 space-y-0.5">
+            <div className="space-y-0.5">
               {email && (
                 <a href={`mailto:${email}`} className="block text-[13px] text-noir hover:text-muted transition-colors duration-200">
                   {email}
@@ -68,7 +67,7 @@ export default function Footer({ text, instagram, email, phone, hours, address, 
           )}
 
           {/* Liens */}
-          <div className="col-span-1 space-y-0.5">
+          <div className="space-y-0.5">
             {instagram && (
               <a
                 href={instagram}
@@ -92,7 +91,7 @@ export default function Footer({ text, instagram, email, phone, hours, address, 
 
       {/* ── Copyright ── */}
       <div className="border-t border-border">
-        <div className="max-w-wide mx-auto px-5 lg:px-8 py-3">
+        <div className="w-full max-w-wide mx-auto px-5 lg:px-8 py-3">
           <p className="text-[11px] text-muted tracking-wide">
             {text || '© 2025 Patine'}
           </p>

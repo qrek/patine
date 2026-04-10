@@ -3,14 +3,23 @@ import Link from 'next/link'
 import { getHome, getSavoirFaire, getRealisations } from '@/lib/content'
 import Reveal from '@/components/Reveal'
 import HeroParallax from '@/components/HeroParallax'
+import FloatingIntro from './FloatingIntro'
 
 export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   const [c, sf, real] = await Promise.all([getHome(), getSavoirFaire(), getRealisations()])
-  const sections  = sf.sections ?? []
-  const photos    = [...(real.photos ?? [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).slice(0, 3)
+  const sections   = sf.sections ?? []
+  const allPhotos  = [...(real.photos ?? [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+  const heroPhotos = allPhotos.slice(0, 3)      // pour la grille réalisations
+  const floatPhotos = allPhotos.slice(0, 4)     // pour les photos flottantes
   const subtitleSize = c.hero.subtitleSize ?? 14
+
+  // Texte d'intro — strip HTML pour l'affichage en gros plan
+  const introText = (c.intro.column1 || '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .trim()
 
   return (
     <>
@@ -30,10 +39,7 @@ export default async function HomePage() {
             {c.hero.title || "L'art d'encadrer"}
           </h1>
           <div className="mt-5 flex items-end justify-between">
-            <p
-              className="tracking-caps uppercase text-cream/70 fade-in-2"
-              style={{ fontSize: subtitleSize }}
-            >
+            <p className="tracking-caps uppercase text-cream/70 fade-in-2" style={{ fontSize: subtitleSize }}>
               {c.hero.subtitle || 'Atelier Patine — Paris'}
             </p>
             <Link href="#intro" className="text-2xs tracking-caps uppercase text-cream/60 hover:text-cream transition-colors duration-200 fade-in-3">
@@ -43,23 +49,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Intro — fond chaud ── */}
-      <section id="intro" className="bg-warm">
-        <div className="max-w-wide mx-auto px-5 lg:px-8 py-20 md:py-32">
-          <div className="grid md:grid-cols-2 gap-10 md:gap-24">
-            {c.intro.column1 && (
-              <Reveal className="text-[16px] leading-relaxed text-noir-soft rich-text">
-                <div dangerouslySetInnerHTML={{ __html: c.intro.column1 }} />
-              </Reveal>
-            )}
-            {c.intro.column2 && (
-              <Reveal delay={0.18} className="text-[16px] leading-relaxed text-noir-soft rich-text">
-                <div dangerouslySetInnerHTML={{ __html: c.intro.column2 }} />
-              </Reveal>
-            )}
-          </div>
-        </div>
-      </section>
+      {/* ── Intro flottante ── */}
+      {introText && (
+        <FloatingIntro text={introText} photos={floatPhotos} />
+      )}
 
       {/* ── Savoir-faire ── */}
       {sections.length > 0 && (
@@ -91,10 +84,10 @@ export default async function HomePage() {
       )}
 
       {/* ── Réalisations preview ── */}
-      {photos.length > 0 && (
+      {heroPhotos.length > 0 && (
         <section className="border-t border-border">
           <div className="grid grid-cols-1 sm:grid-cols-3">
-            {photos.map((photo, i) => (
+            {heroPhotos.map((photo, i) => (
               <Reveal key={photo.id} delay={i * 0.12} className="relative aspect-[4/5] overflow-hidden bg-[#D8D6D1] group">
                 <Image
                   src={photo.src}
