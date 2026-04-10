@@ -10,6 +10,7 @@ const config: Config = {
     extend: {
       colors: {
         cream:  '#F5F3EF',
+        warm:   '#fff4eb',
         noir:   '#1C1C1A',
         'noir-soft': '#3A3A38',
         gold:   '#B8A87A',
@@ -23,7 +24,7 @@ const config: Config = {
       },
       fontSize: { '2xs': '11px' },
       letterSpacing: { caps: '0.12em' },
-      maxWidth: { content: '680px', wide: '1160px' },
+      maxWidth: { content: '680px', wide: '1440px' },
     },
   },
   plugins: [],

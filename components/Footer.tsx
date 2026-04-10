@@ -17,7 +17,7 @@ export default function Footer({ text, instagram, email, phone, hours, address, 
     <footer className="border-t border-border bg-cream">
 
       {/* ── Bande principale ── */}
-      <div className="max-w-wide mx-auto px-6 lg:px-14 py-6">
+      <div className="max-w-wide mx-auto px-5 lg:px-8 py-6">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-y-6 gap-x-6 items-start">
 
           {/* Logo / nom */}
@@ -92,7 +92,7 @@ export default function Footer({ text, instagram, email, phone, hours, address, 
 
       {/* ── Copyright ── */}
       <div className="border-t border-border">
-        <div className="max-w-wide mx-auto px-6 lg:px-14 py-3">
+        <div className="max-w-wide mx-auto px-5 lg:px-8 py-3">
           <p className="text-[11px] text-muted tracking-wide">
             {text || '© 2025 Patine'}
           </p>

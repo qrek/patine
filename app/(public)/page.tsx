@@ -25,7 +25,7 @@ export default async function HomePage() {
         )}
         <div className="absolute inset-0 bg-noir/25" />
 
-        <div className="relative mt-auto px-6 lg:px-14 pb-14 max-w-wide mx-auto w-full">
+        <div className="relative mt-auto px-5 lg:px-8 pb-14 max-w-wide mx-auto w-full">
           <h1 className="font-power text-6xl md:text-8xl lg:text-9xl text-cream fade-in leading-[1.0]">
             {c.hero.title || "L'art d'encadrer"}
           </h1>
@@ -43,26 +43,28 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Intro ── */}
-      <section id="intro" className="max-w-wide mx-auto px-6 lg:px-14 py-20 md:py-32">
-        <div className="grid md:grid-cols-2 gap-10 md:gap-24">
-          {c.intro.column1 && (
-            <Reveal className="text-[16px] leading-relaxed text-noir-soft rich-text">
-              <div dangerouslySetInnerHTML={{ __html: c.intro.column1 }} />
-            </Reveal>
-          )}
-          {c.intro.column2 && (
-            <Reveal delay={0.18} className="text-[16px] leading-relaxed text-noir-soft rich-text">
-              <div dangerouslySetInnerHTML={{ __html: c.intro.column2 }} />
-            </Reveal>
-          )}
+      {/* ── Intro — fond chaud ── */}
+      <section id="intro" className="bg-warm">
+        <div className="max-w-wide mx-auto px-5 lg:px-8 py-20 md:py-32">
+          <div className="grid md:grid-cols-2 gap-10 md:gap-24">
+            {c.intro.column1 && (
+              <Reveal className="text-[16px] leading-relaxed text-noir-soft rich-text">
+                <div dangerouslySetInnerHTML={{ __html: c.intro.column1 }} />
+              </Reveal>
+            )}
+            {c.intro.column2 && (
+              <Reveal delay={0.18} className="text-[16px] leading-relaxed text-noir-soft rich-text">
+                <div dangerouslySetInnerHTML={{ __html: c.intro.column2 }} />
+              </Reveal>
+            )}
+          </div>
         </div>
       </section>
 
       {/* ── Savoir-faire ── */}
       {sections.length > 0 && (
         <section className="border-t border-border">
-          <div className="max-w-wide mx-auto px-6 lg:px-14 py-20 md:py-28">
+          <div className="max-w-wide mx-auto px-5 lg:px-8 py-20 md:py-28">
             <Reveal>
               <p className="text-2xs tracking-caps uppercase text-muted mb-14">Notre Savoir-faire</p>
             </Reveal>
@@ -104,7 +106,7 @@ export default async function HomePage() {
               </Reveal>
             ))}
           </div>
-          <Reveal className="max-w-wide mx-auto px-6 lg:px-14 py-8 border-t border-border">
+          <Reveal className="max-w-wide mx-auto px-5 lg:px-8 py-8 border-t border-border">
             <Link href="/realisations" className="text-2xs tracking-caps uppercase text-noir border-b border-noir pb-0.5 hover:text-muted hover:border-muted transition-colors duration-200">
               Voir toutes les réalisations ↗
             </Link>

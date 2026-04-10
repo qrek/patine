@@ -26,7 +26,7 @@ export default async function ContactPage() {
       )}
 
       {/* ── Contenu ── */}
-      <div className={`flex-1 flex flex-col justify-center px-8 lg:px-16 xl:px-24 py-12 md:py-16 ${!hasImage ? 'max-w-3xl mx-auto w-full' : ''}`}>
+      <div className={`flex-1 flex flex-col justify-center px-8 lg:px-14 xl:px-20 py-12 md:py-16 ${!hasImage ? 'max-w-3xl mx-auto w-full' : ''}`}>
 
         {/* En-tête */}
         <div className="mb-10 md:mb-12">
