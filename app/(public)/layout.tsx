@@ -13,7 +13,10 @@ export default async function PublicLayout({ children }: { children: React.React
         instagram={s.instagram}
         email={s.email}
         phone={s.phone}
+        hours={s.hours}
         address={s.address}
+        logoSrc={s.logo?.src ?? ''}
+        logoWidth={s.logo?.width ?? 100}
       />
     </div>
   )

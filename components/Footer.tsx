@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 
 interface FooterProps {
@@ -5,75 +6,99 @@ interface FooterProps {
   instagram?: string
   email?: string
   phone?: string
-  address?: { street: string; city: string }
+  hours?: string
+  address?: { street: string; city: string; country?: string }
+  logoSrc?: string
+  logoWidth?: number
 }
 
-export default function Footer({ text, instagram, email, phone, address }: FooterProps) {
+export default function Footer({ text, instagram, email, phone, hours, address, logoSrc, logoWidth = 100 }: FooterProps) {
   return (
-    <footer className="border-t border-border mt-auto">
-      {/* Grille principale */}
-      <div className="max-w-wide mx-auto px-6 lg:px-10 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
+    <footer className="border-t border-border bg-cream">
 
-        {/* Logo + baseline */}
-        <div className="col-span-2 md:col-span-1">
-          <p className="font-cormorant text-xl leading-tight text-noir mb-1">Patine</p>
-          <p className="text-2xs text-muted tracking-caps uppercase">Atelier d'encadrement</p>
-        </div>
+      {/* ── Bande principale ── */}
+      <div className="max-w-wide mx-auto px-6 lg:px-14 py-6">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-y-6 gap-x-6 items-start">
 
-        {/* Adresse */}
-        {address && (
-          <div>
-            <p className="text-2xs tracking-caps uppercase text-muted mb-3">Atelier</p>
-            <p className="text-[13px] text-noir leading-relaxed">
-              {address.street}<br />{address.city}
-            </p>
+          {/* Logo / nom */}
+          <div className="col-span-1">
+            {logoSrc ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={logoSrc}
+                alt="Patine"
+                style={{ width: Math.min(logoWidth, 120), height: 'auto' }}
+                className="object-contain"
+              />
+            ) : (
+              <span className="font-cormorant text-[18px] leading-tight text-noir">Patine</span>
+            )}
           </div>
-        )}
 
-        {/* Contact */}
-        {(email || phone) && (
-          <div>
-            <p className="text-2xs tracking-caps uppercase text-muted mb-3">Contact</p>
-            <div className="space-y-1 text-[13px]">
+          {/* Adresse */}
+          {address && (address.street || address.city) && (
+            <div className="col-span-1">
+              <p className="text-[13px] text-noir leading-relaxed whitespace-pre-line">
+                {[address.street, address.city].filter(Boolean).join('\n')}
+              </p>
+            </div>
+          )}
+
+          {/* Horaires */}
+          {hours && (
+            <div className="col-span-1">
+              <p className="text-[13px] text-noir leading-relaxed whitespace-pre-line">{hours}</p>
+            </div>
+          )}
+
+          {/* Email + Tél */}
+          {(email || phone) && (
+            <div className="col-span-1 space-y-0.5">
               {email && (
-                <a href={`mailto:${email}`} className="block text-noir hover:text-muted transition-colors duration-200">
+                <a href={`mailto:${email}`} className="block text-[13px] text-noir hover:text-muted transition-colors duration-200">
                   {email}
                 </a>
               )}
               {phone && (
-                <a href={`tel:${phone.replace(/\s/g, '')}`} className="block text-noir hover:text-muted transition-colors duration-200">
+                <a href={`tel:${phone.replace(/\s/g, '')}`} className="block text-[13px] text-noir hover:text-muted transition-colors duration-200">
                   {phone}
                 </a>
               )}
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Liens */}
-        <div>
-          <p className="text-2xs tracking-caps uppercase text-muted mb-3">Liens</p>
-          <div className="space-y-1 text-[13px]">
-            <Link href="/savoir-faire" className="block text-noir hover:text-muted transition-colors duration-200">Notre Savoir-faire ↗</Link>
-            <Link href="/realisations"  className="block text-noir hover:text-muted transition-colors duration-200">Réalisations ↗</Link>
-            <Link href="/contact"       className="block text-noir hover:text-muted transition-colors duration-200">Contact ↗</Link>
+          {/* Liens */}
+          <div className="col-span-1 space-y-0.5">
             {instagram && (
-              <a href={instagram} target="_blank" rel="noopener noreferrer"
-                className="block text-noir hover:text-muted transition-colors duration-200">
+              <a
+                href={instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-[13px] text-noir underline underline-offset-2 decoration-border hover:decoration-muted hover:text-muted transition-colors duration-200"
+              >
                 Instagram ↗
               </a>
             )}
+            <Link href="/contact" className="block text-[13px] text-noir underline underline-offset-2 decoration-border hover:decoration-muted hover:text-muted transition-colors duration-200">
+              Contact ↗
+            </Link>
+            <Link href="/savoir-faire" className="block text-[13px] text-noir underline underline-offset-2 decoration-border hover:decoration-muted hover:text-muted transition-colors duration-200">
+              Notre Savoir-faire ↗
+            </Link>
           </div>
+
         </div>
       </div>
 
-      {/* Bas de footer */}
+      {/* ── Copyright ── */}
       <div className="border-t border-border">
-        <div className="max-w-wide mx-auto px-6 lg:px-10 py-4">
-          <p className="text-2xs text-muted tracking-caps">
+        <div className="max-w-wide mx-auto px-6 lg:px-14 py-3">
+          <p className="text-[11px] text-muted tracking-wide">
             {text || '© 2025 Patine'}
           </p>
         </div>
       </div>
+
     </footer>
   )
 }

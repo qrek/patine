@@ -8,6 +8,7 @@ interface Settings {
   email: string
   phone: string
   instagram: string
+  hours: string
   footer: string
   logo: { src: string; srcDark: string; width: number }
 }
@@ -17,6 +18,7 @@ const DEFAULT: Settings = {
   email: '',
   phone: '',
   instagram: '',
+  hours: '',
   footer: '© 2025 Patine',
   logo: { src: '', srcDark: '', width: 100 },
 }
@@ -28,7 +30,7 @@ export default function AdminParametres() {
   useEffect(() => {
     fetch('/api/admin/get?section=settings')
       .then((r) => r.json())
-      .then((d) => setSettings({ ...DEFAULT, ...d, logo: { ...DEFAULT.logo, ...(d.logo ?? {}) } as Settings['logo'] }))
+      .then((d) => setSettings({ ...DEFAULT, ...d, hours: d.hours ?? '', logo: { ...DEFAULT.logo, ...(d.logo ?? {}) } as Settings['logo'] }))
       .catch(() => {})
   }, [])
 
@@ -157,6 +159,22 @@ export default function AdminParametres() {
               />
             </div>
           ))}
+        </section>
+
+        {/* Horaires */}
+        <section className="bg-white rounded-lg border border-gray-200 p-6">
+          <h2 className="text-sm font-medium text-gray-700 border-b border-gray-100 pb-3 mb-4">Horaires d'ouverture</h2>
+          <div>
+            <label className="block text-xs text-gray-500 mb-1.5">Horaires (une ligne par créneau)</label>
+            <textarea
+              rows={3}
+              value={settings.hours}
+              onChange={(e) => set('hours', e.target.value)}
+              placeholder={'Lundi – Vendredi : 10h – 18h\nSamedi : 10h – 17h'}
+              className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#B8A87A] transition-colors resize-none"
+            />
+            <p className="text-[10px] text-gray-300 mt-1">S'affiche dans le footer. Retour à la ligne = nouveau créneau.</p>
+          </div>
         </section>
 
         {/* Contact */}

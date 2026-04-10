@@ -58,6 +58,7 @@ export interface SettingsContent {
   email: string
   phone: string
   instagram: string
+  hours: string
   footer: string
   logo: { src: string; srcDark: string; width: number }
   contactImage?: string
@@ -141,6 +142,7 @@ const settingsDefault: SettingsContent = {
   email: '',
   phone: '',
   instagram: '',
+  hours: '',
   footer: '© 2025 Patine',
   logo: { src: '', srcDark: '', width: 100 },
 }
