@@ -122,6 +122,15 @@ export default function AdminSavoirFaire() {
                 onChange={(html) => updateSection(section.id, 'body', html)}
               />
             </div>
+            <div>
+              <label className="block text-[11px] text-gray-400 mb-1.5">Photo associée (panneau droit)</label>
+              <ImageUpload
+                value={section.image}
+                onChange={(url) => updateSection(section.id, 'image', url)}
+                destination={`savoir-faire-section-${section.id}`}
+              />
+              <p className="text-[10px] text-gray-300 mt-1">Si vide, utilise la grande image ou la galerie.</p>
+            </div>
           </section>
         ))}
 

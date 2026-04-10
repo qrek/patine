@@ -61,12 +61,13 @@ h1, h2, h3, h4, h5 {
 
 /* ── Animations page ─────────────────────────────────────────────────────── */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(44px); }
+  from { opacity: 0; transform: translateY(52px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.fade-in   { animation: fadeUp 1.1s cubic-bezier(0.22,1,0.36,1) 0.1s both; }
-.fade-in-2 { animation: fadeUp 1.1s cubic-bezier(0.22,1,0.36,1) 0.3s both; }
-.fade-in-3 { animation: fadeUp 1.1s cubic-bezier(0.22,1,0.36,1) 0.5s both; }
+/* ease expressif [0.16, 1, 0.3, 1] : lent au départ, arrive doucement */
+.fade-in   { animation: fadeUp 1.4s cubic-bezier(0.16,1,0.3,1) 0.15s both; }
+.fade-in-2 { animation: fadeUp 1.4s cubic-bezier(0.16,1,0.3,1) 0.4s  both; }
+.fade-in-3 { animation: fadeUp 1.4s cubic-bezier(0.16,1,0.3,1) 0.65s both; }
 
 /* ── Règle fine ─────────────────────────────────────────────────────────── */
 .rule { display: block; width: 100%; height: 1px; background: var(--border); }

@@ -1,8 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { getHome, getSavoirFaire, getRealisations } from '@/lib/content'
-import InstagramScroll from './InstagramScroll'
 import Reveal from '@/components/Reveal'
+import HeroParallax from '@/components/HeroParallax'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,15 +10,16 @@ export default async function HomePage() {
   const [c, sf, real] = await Promise.all([getHome(), getSavoirFaire(), getRealisations()])
   const sections  = sf.sections ?? []
   const photos    = [...(real.photos ?? [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).slice(0, 3)
-  const instaFeed = c.instagramFeed ?? []
   const subtitleSize = c.hero.subtitleSize ?? 14
 
   return (
     <>
       {/* ── Hero ── */}
-      <section className="relative h-screen flex flex-col">
+      <section className="relative h-screen flex flex-col overflow-hidden">
         {c.hero.image ? (
-          <Image src={c.hero.image} alt="Atelier Patine" fill className="object-cover" priority />
+          <HeroParallax>
+            <Image src={c.hero.image} alt="Atelier Patine" fill className="object-cover" priority />
+          </HeroParallax>
         ) : (
           <div className="absolute inset-0 bg-[#D8D6D1]" />
         )}
@@ -84,16 +85,6 @@ export default async function HomePage() {
               </Link>
             </Reveal>
           </div>
-        </section>
-      )}
-
-      {/* ── Instagram scroll (après savoir-faire) ── */}
-      {instaFeed.length > 0 && (
-        <section className="border-t border-border py-16">
-          <Reveal className="px-6 lg:px-14 mb-8 flex items-end justify-between max-w-wide mx-auto">
-            <p className="text-2xs tracking-caps uppercase text-muted">Instagram</p>
-          </Reveal>
-          <InstagramScroll photos={instaFeed} />
         </section>
       )}
 
