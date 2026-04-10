@@ -2,21 +2,18 @@
 
 import { useState, useEffect, FormEvent } from 'react'
 import ImageUpload from '@/components/ImageUpload'
+import RichTextEditor from '@/components/RichTextEditor'
 
-interface Section {
-  id: string
-  title: string
-  body: string
-  image: string
-}
-
+interface Section { id: string; title: string; body: string; image: string }
 interface SavoirFaireData {
+  pageTitle: string
   heroImage: string
   gallery: string[]
   sections: Section[]
 }
 
 const DEFAULT: SavoirFaireData = {
+  pageTitle: "L'art de l'encadrement",
   heroImage: '',
   gallery: ['', '', '', ''],
   sections: [
@@ -33,13 +30,14 @@ const LABELS: Record<string, string> = {
 }
 
 export default function AdminSavoirFaire() {
-  const [data, setData] = useState<SavoirFaireData>(DEFAULT)
+  const [data, setData]     = useState<SavoirFaireData>(DEFAULT)
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
 
   useEffect(() => {
     fetch('/api/admin/get?section=savoir-faire')
       .then((r) => r.json())
       .then((d) => setData({
+        pageTitle: d.pageTitle ?? DEFAULT.pageTitle,
         heroImage: d.heroImage ?? '',
         gallery:   d.gallery?.length === 4 ? d.gallery : ['', '', '', ''],
         sections:  d.sections?.length > 0 ? d.sections : DEFAULT.sections,
@@ -64,43 +62,41 @@ export default function AdminSavoirFaire() {
       })
       setStatus(res.ok ? 'saved' : 'error')
       setTimeout(() => setStatus('idle'), 3000)
-    } catch {
-      setStatus('error')
-    }
+    } catch { setStatus('error') }
   }
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-semibold text-gray-800 mb-8">Savoir-faire</h1>
+      <h1 className="text-lg font-medium text-gray-900 mb-8">Savoir-faire</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-5">
 
-        {/* Grande image du haut */}
-        <section className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
-          <h2 className="text-sm font-medium text-gray-700 border-b border-gray-100 pb-3">
-            Grande image (hero droit)
-          </h2>
-          <ImageUpload
-            value={data.heroImage}
-            onChange={setHero}
-            destination="savoir-faire-hero"
+        {/* Titre de la page */}
+        <section className="bg-white rounded-lg border border-gray-200 p-6">
+          <h2 className="text-[13px] font-medium text-gray-700 border-b border-gray-100 pb-3 mb-4">Titre de la page</h2>
+          <input
+            type="text"
+            value={data.pageTitle}
+            onChange={(e) => setData((d) => ({ ...d, pageTitle: e.target.value }))}
+            className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-gray-400"
+            placeholder="L'art de l'encadrement"
           />
+        </section>
+
+        {/* Grande image hero */}
+        <section className="bg-white rounded-lg border border-gray-200 p-6 space-y-3">
+          <h2 className="text-[13px] font-medium text-gray-700 border-b border-gray-100 pb-3">Grande image (hero droit)</h2>
+          <ImageUpload value={data.heroImage} onChange={setHero} destination="savoir-faire-hero" />
         </section>
 
         {/* 4 petites photos */}
         <section className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
-          <h2 className="text-sm font-medium text-gray-700 border-b border-gray-100 pb-3">
-            Frise de 4 petites photos
-          </h2>
+          <h2 className="text-[13px] font-medium text-gray-700 border-b border-gray-100 pb-3">Frise de 4 photos</h2>
           <div className="grid grid-cols-2 gap-3">
             {data.gallery.map((src, i) => (
               <div key={i}>
-                <p className="text-xs text-gray-400 mb-1.5">Photo {i + 1}</p>
-                <ImageUpload
-                  value={src}
-                  onChange={(url) => setGallery(i, url)}
-                  destination={`savoir-faire-gallery-${i}`}
-                />
+                <p className="text-[11px] text-gray-400 mb-1.5">Photo {i + 1}</p>
+                <ImageUpload value={src} onChange={(url) => setGallery(i, url)} destination={`savoir-faire-gallery-${i}`} />
               </div>
             ))}
           </div>
@@ -109,43 +105,33 @@ export default function AdminSavoirFaire() {
         {/* Sections de texte */}
         {data.sections.map((section, i) => (
           <section key={section.id} className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
-            <h2 className="text-sm font-medium text-gray-700 border-b border-gray-100 pb-3">
-              <span className="text-[#B8A87A] mr-2">0{i + 1}</span>
-              {LABELS[section.id] || section.id}
+            <h2 className="text-[13px] font-medium text-gray-700 border-b border-gray-100 pb-3">
+              {i === 0 ? 'Texte d\'introduction (affiché sur le hero)' : `Section — ${LABELS[section.id] || section.id}`}
             </h2>
-
             <div>
-              <label className="block text-xs text-gray-500 mb-1.5">Titre</label>
-              <input
-                type="text"
-                value={section.title}
+              <label className="block text-[11px] text-gray-400 mb-1.5">Titre</label>
+              <input type="text" value={section.title}
                 onChange={(e) => updateSection(section.id, 'title', e.target.value)}
-                className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#B8A87A] transition-colors"
+                className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-gray-400"
               />
             </div>
-
             <div>
-              <label className="block text-xs text-gray-500 mb-1.5">Texte</label>
-              <textarea
-                rows={5}
+              <label className="block text-[11px] text-gray-400 mb-2">Texte</label>
+              <RichTextEditor
                 value={section.body}
-                onChange={(e) => updateSection(section.id, 'body', e.target.value)}
-                className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#B8A87A] transition-colors resize-none"
+                onChange={(html) => updateSection(section.id, 'body', html)}
               />
             </div>
           </section>
         ))}
 
         <div className="flex items-center gap-4 pt-2">
-          <button
-            type="submit"
-            disabled={status === 'saving'}
-            className="px-8 py-2.5 text-sm bg-[#1A1A18] text-white rounded hover:bg-[#B8A87A] transition-colors duration-300 disabled:opacity-50"
-          >
+          <button type="submit" disabled={status === 'saving'}
+            className="px-8 py-2.5 text-[13px] bg-gray-900 text-white rounded hover:bg-gray-700 transition-colors disabled:opacity-40">
             {status === 'saving' ? 'Enregistrement…' : 'Enregistrer'}
           </button>
-          {status === 'saved' && <span className="text-sm text-green-600">✓ Enregistré</span>}
-          {status === 'error'  && <span className="text-sm text-red-500">Erreur lors de la sauvegarde</span>}
+          {status === 'saved' && <span className="text-[13px] text-green-600">✓ Enregistré</span>}
+          {status === 'error'  && <span className="text-[13px] text-red-500">Erreur</span>}
         </div>
       </form>
     </div>

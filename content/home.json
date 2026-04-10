@@ -1,11 +1,13 @@
 {
   "hero": {
     "title": "L'art d'encadrer",
-    "subtitle": "Atelier Patine — Paris",
+    "subtitle": "Atelier d'encadrement",
+    "subtitleSize": 14,
     "image": ""
   },
   "intro": {
     "column1": "Patine est un atelier d'encadrement artisanal fondé à Paris, dédié à la mise en valeur des œuvres d'art, photographies et créations qui vous sont chères.",
     "column2": "Chaque encadrement est pensé comme une œuvre en soi — le choix des matières, la précision du geste, l'harmonie des proportions. Un savoir-faire transmis, une attention portée à chaque détail."
-  }
+  },
+  "instagramFeed": []
 }

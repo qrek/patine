@@ -2,23 +2,34 @@
 
 import { useState, useEffect, FormEvent } from 'react'
 import ImageUpload from '@/components/ImageUpload'
+import RichTextEditor from '@/components/RichTextEditor'
 
+interface InstagramPhoto { id: string; src: string; caption?: string }
 interface HomeContent {
-  hero: { title: string; subtitle: string; image: string }
+  hero: { title: string; subtitle: string; subtitleSize: number; image: string }
   intro: { column1: string; column2: string }
+  instagramFeed: InstagramPhoto[]
+}
+
+const DEFAULT: HomeContent = {
+  hero: { title: "L'art d'encadrer", subtitle: 'Atelier d\'encadrement', subtitleSize: 14, image: '' },
+  intro: { column1: '', column2: '' },
+  instagramFeed: [],
 }
 
 export default function AdminAccueil() {
-  const [content, setContent] = useState<HomeContent>({
-    hero: { title: '', subtitle: '', image: '' },
-    intro: { column1: '', column2: '' },
-  })
+  const [content, setContent] = useState<HomeContent>(DEFAULT)
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  const [uploadingInsta, setUploadingInsta] = useState(false)
 
   useEffect(() => {
     fetch('/api/admin/get?section=home')
       .then((r) => r.json())
-      .then((d) => setContent(d))
+      .then((d) => setContent({
+        hero: { ...DEFAULT.hero, ...d.hero },
+        intro: { ...DEFAULT.intro, ...d.intro },
+        instagramFeed: d.instagramFeed ?? [],
+      }))
       .catch(() => {})
   }, [])
 
@@ -33,90 +44,169 @@ export default function AdminAccueil() {
       })
       setStatus(res.ok ? 'saved' : 'error')
       setTimeout(() => setStatus('idle'), 3000)
-    } catch {
-      setStatus('error')
+    } catch { setStatus('error') }
+  }
+
+  const setHero = (field: keyof HomeContent['hero'], value: string | number) =>
+    setContent((c) => ({ ...c, hero: { ...c.hero, [field]: value } }))
+
+  // Instagram feed
+  async function addInstaPhoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingInsta(true)
+    const fd = new FormData()
+    fd.append('file', file)
+    fd.append('destination', 'instagram')
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (data.path) {
+        const newPhoto: InstagramPhoto = {
+          id: Date.now().toString(),
+          src: data.path,
+          caption: '',
+        }
+        setContent((c) => ({ ...c, instagramFeed: [...c.instagramFeed, newPhoto] }))
+      }
+    } finally {
+      setUploadingInsta(false)
+      e.target.value = ''
     }
+  }
+
+  function updateInstaCaption(id: string, caption: string) {
+    setContent((c) => ({
+      ...c,
+      instagramFeed: c.instagramFeed.map((p) => p.id === id ? { ...p, caption } : p),
+    }))
+  }
+
+  function removeInstaPhoto(id: string) {
+    setContent((c) => ({ ...c, instagramFeed: c.instagramFeed.filter((p) => p.id !== id) }))
   }
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-semibold text-gray-800 mb-8">Page d'accueil</h1>
+      <h1 className="text-lg font-medium text-gray-900 mb-2">Page d'accueil</h1>
+      <p className="text-[13px] text-gray-400 mb-8">Modifiez le contenu de la page d'accueil.</p>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Hero */}
+      <form onSubmit={handleSubmit} className="space-y-5">
+
+        {/* ── Hero ── */}
         <section className="bg-white rounded-lg border border-gray-200 p-6 space-y-5">
-          <h2 className="text-sm font-medium text-gray-700 border-b border-gray-100 pb-3">
-            Section Hero
-          </h2>
+          <h2 className="text-[13px] font-medium text-gray-700 border-b border-gray-100 pb-3">Section Hero</h2>
 
           <div>
-            <label className="block text-xs text-gray-500 mb-1.5">Titre principal</label>
-            <input
-              type="text"
-              value={content.hero.title}
-              onChange={(e) => setContent((c) => ({ ...c, hero: { ...c.hero, title: e.target.value } }))}
-              className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#B8A87A] transition-colors"
+            <label className="block text-[11px] text-gray-400 mb-1.5">Titre principal</label>
+            <input type="text" value={content.hero.title}
+              onChange={(e) => setHero('title', e.target.value)}
+              className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-gray-400"
             />
           </div>
 
           <div>
-            <label className="block text-xs text-gray-500 mb-1.5">Sous-titre</label>
-            <input
-              type="text"
-              value={content.hero.subtitle}
-              onChange={(e) => setContent((c) => ({ ...c, hero: { ...c.hero, subtitle: e.target.value } }))}
-              className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#B8A87A] transition-colors"
+            <label className="block text-[11px] text-gray-400 mb-1.5">Sous-titre (ex : Atelier d'encadrement)</label>
+            <input type="text" value={content.hero.subtitle}
+              onChange={(e) => setHero('subtitle', e.target.value)}
+              className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-gray-400"
             />
           </div>
 
           <div>
-            <label className="block text-xs text-gray-500 mb-2">Image hero</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[11px] text-gray-400">Taille du sous-titre</label>
+              <span className="text-[11px] font-medium text-gray-600">{content.hero.subtitleSize}px</span>
+            </div>
+            <input type="range" min={10} max={32} step={1}
+              value={content.hero.subtitleSize}
+              onChange={(e) => setHero('subtitleSize', Number(e.target.value))}
+              className="w-full accent-gray-900"
+            />
+            <div className="flex justify-between text-[10px] text-gray-300 mt-0.5">
+              <span>Petit</span><span>Grand</span>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[11px] text-gray-400 mb-2">Image hero</label>
             <ImageUpload
               value={content.hero.image}
-              onChange={(url) => setContent((c) => ({ ...c, hero: { ...c.hero, image: url } }))}
+              onChange={(url) => setHero('image', url)}
               destination="hero"
             />
           </div>
         </section>
 
-        {/* Intro */}
+        {/* ── Intro ── */}
         <section className="bg-white rounded-lg border border-gray-200 p-6 space-y-5">
-          <h2 className="text-sm font-medium text-gray-700 border-b border-gray-100 pb-3">
-            Section Introduction
-          </h2>
-
+          <h2 className="text-[13px] font-medium text-gray-700 border-b border-gray-100 pb-3">Section Introduction</h2>
           <div>
-            <label className="block text-xs text-gray-500 mb-1.5">Colonne gauche</label>
-            <textarea
-              rows={5}
+            <label className="block text-[11px] text-gray-400 mb-2">Colonne gauche</label>
+            <RichTextEditor
               value={content.intro.column1}
-              onChange={(e) => setContent((c) => ({ ...c, intro: { ...c.intro, column1: e.target.value } }))}
-              className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#B8A87A] transition-colors resize-none"
+              onChange={(html) => setContent((c) => ({ ...c, intro: { ...c.intro, column1: html } }))}
             />
           </div>
-
           <div>
-            <label className="block text-xs text-gray-500 mb-1.5">Colonne droite</label>
-            <textarea
-              rows={5}
+            <label className="block text-[11px] text-gray-400 mb-2">Colonne droite</label>
+            <RichTextEditor
               value={content.intro.column2}
-              onChange={(e) => setContent((c) => ({ ...c, intro: { ...c.intro, column2: e.target.value } }))}
-              className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#B8A87A] transition-colors resize-none"
+              onChange={(html) => setContent((c) => ({ ...c, intro: { ...c.intro, column2: html } }))}
             />
           </div>
         </section>
 
-        {/* Save */}
-        <div className="flex items-center gap-4">
-          <button
-            type="submit"
-            disabled={status === 'saving'}
-            className="px-8 py-2.5 text-sm bg-[#1A1A18] text-white rounded hover:bg-[#B8A87A] transition-colors duration-300 disabled:opacity-50"
-          >
+        {/* ── Instagram feed ── */}
+        <section className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
+          <h2 className="text-[13px] font-medium text-gray-700 border-b border-gray-100 pb-3">
+            Section Instagram (scroll de photos)
+          </h2>
+          <p className="text-[12px] text-gray-400">Ces photos s'affichent en défilement horizontal en bas de la page d'accueil.</p>
+
+          {/* Liste photos existantes */}
+          {content.instagramFeed.length > 0 && (
+            <div className="space-y-3">
+              {content.instagramFeed.map((photo) => (
+                <div key={photo.id} className="flex gap-3 items-start">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={photo.src} alt="" className="w-16 h-16 object-cover rounded flex-shrink-0" />
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      placeholder="Légende (optionnelle)"
+                      value={photo.caption || ''}
+                      onChange={(e) => updateInstaCaption(photo.id, e.target.value)}
+                      className="w-full border border-gray-200 rounded px-3 py-1.5 text-[13px] focus:outline-none focus:border-gray-400"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeInstaPhoto(photo.id)}
+                    className="text-[11px] text-gray-400 hover:text-red-400 transition-colors flex-shrink-0 mt-1.5"
+                  >
+                    Suppr.
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Ajouter */}
+          <label className="inline-flex items-center gap-2 cursor-pointer text-[12px] text-gray-500 border border-gray-200 rounded px-4 py-2 hover:border-gray-400 transition-colors">
+            {uploadingInsta ? 'Upload…' : '+ Ajouter une photo'}
+            <input type="file" accept="image/*" className="hidden" onChange={addInstaPhoto} disabled={uploadingInsta} />
+          </label>
+        </section>
+
+        {/* ── Enregistrer ── */}
+        <div className="flex items-center gap-4 pt-2">
+          <button type="submit" disabled={status === 'saving'}
+            className="px-8 py-2.5 text-[13px] bg-gray-900 text-white rounded hover:bg-gray-700 transition-colors disabled:opacity-40">
             {status === 'saving' ? 'Enregistrement…' : 'Enregistrer'}
           </button>
-          {status === 'saved' && <span className="text-sm text-green-600">✓ Enregistré</span>}
-          {status === 'error' && <span className="text-sm text-red-500">Erreur lors de la sauvegarde</span>}
+          {status === 'saved' && <span className="text-[13px] text-green-600">✓ Enregistré</span>}
+          {status === 'error'  && <span className="text-[13px] text-red-500">Erreur</span>}
         </div>
       </form>
     </div>

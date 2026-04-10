@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { getSettings } from '@/lib/content'
 import ContactForm from './ContactForm'
 
@@ -12,8 +13,20 @@ export default async function ContactPage() {
       {/* En-tête */}
       <div className="max-w-wide mx-auto px-6 lg:px-10 pt-16 pb-10 border-b border-border">
         <p className="text-2xs tracking-caps uppercase text-muted mb-4">Nous contacter</p>
-        <h1 className="font-cormorant text-5xl md:text-6xl text-noir">Contact</h1>
+        <h1 className="font-power text-5xl md:text-6xl text-noir">Contact</h1>
       </div>
+
+      {/* Image de contact (pleine largeur si présente) */}
+      {s.contactImage && (
+        <div className="relative w-full h-[45vh] overflow-hidden bg-[#D8D6D1]">
+          <Image
+            src={s.contactImage}
+            alt="Atelier Patine"
+            fill
+            className="object-cover"
+          />
+        </div>
+      )}
 
       <div className="max-w-wide mx-auto px-6 lg:px-10 py-16 grid md:grid-cols-2 gap-16 md:gap-24">
         {/* Formulaire */}
@@ -22,7 +35,7 @@ export default async function ContactPage() {
           <ContactForm />
         </div>
 
-        {/* Infos */}
+        {/* Infos atelier */}
         <div className="space-y-10">
           <p className="text-2xs tracking-caps uppercase text-muted">L'atelier</p>
 
@@ -31,7 +44,7 @@ export default async function ContactPage() {
               <p className="text-2xs tracking-caps uppercase text-muted mb-2">Adresse</p>
               <p className="text-[15px] text-noir leading-relaxed">
                 {s.address.street && <span className="block">{s.address.street}</span>}
-                {s.address.city && <span className="block">{s.address.city}</span>}
+                {s.address.city   && <span className="block">{s.address.city}</span>}
               </p>
             </div>
           )}

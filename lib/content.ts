@@ -15,9 +15,16 @@ const isProduction = process.env.NODE_ENV === 'production' && !!kvUrl
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+export interface InstagramPhoto {
+  id: string
+  src: string
+  caption?: string
+}
+
 export interface HomeContent {
-  hero: { title: string; subtitle: string; image: string }
+  hero: { title: string; subtitle: string; subtitleSize?: number; image: string }
   intro: { column1: string; column2: string }
+  instagramFeed?: InstagramPhoto[]
 }
 
 export interface SavoirFaireSection {
@@ -28,6 +35,7 @@ export interface SavoirFaireSection {
 }
 
 export interface SavoirFaireContent {
+  pageTitle?: string
   sections: SavoirFaireSection[]
   heroImage: string
   gallery: string[]
@@ -52,6 +60,7 @@ export interface SettingsContent {
   instagram: string
   footer: string
   logo: { src: string; srcDark: string; width: number }
+  contactImage?: string
 }
 
 // ─── Helpers locaux ───────────────────────────────────────────────────────────

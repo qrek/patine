@@ -182,6 +182,14 @@ export default function AdminParametres() {
           </div>
         </section>
 
+        {/* Image page Contact */}
+        <section className="bg-white rounded-lg border border-gray-200 p-6 space-y-3">
+          <h2 className="text-sm font-medium text-gray-700 border-b border-gray-100 pb-3">Image — Page Contact</h2>
+          <p className="text-[11px] text-gray-400">S'affiche en bandeau pleine largeur sous le titre de la page contact.</p>
+          {/* @ts-expect-error contactImage added dynamically */}
+          <ImageUpload value={settings.contactImage ?? ''} onChange={(url) => setSettings((s) => ({ ...s, contactImage: url }))} destination="contact" />
+        </section>
+
         {/* Footer */}
         <section className="bg-white rounded-lg border border-gray-200 p-6">
           <h2 className="text-sm font-medium text-gray-700 border-b border-gray-100 pb-3 mb-4">Footer</h2>

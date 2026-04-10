@@ -1,22 +1,25 @@
 {
+  "pageTitle": "L'art de l'encadrement",
+  "heroImage": "",
+  "gallery": ["", "", "", ""],
   "sections": [
     {
       "id": "matieres",
       "title": "Le Choix des matières",
-      "body": "Baguettes en bois massif, passepartouts en carton muséal, verres anti-reflets ou antireflets conservation UV — chaque matériau est sélectionné pour sa qualité, sa durabilité et son rapport à l'œuvre encadrée. Nous travaillons exclusivement avec des fournisseurs européens partageant notre exigence.",
-      "image": "/images/savoir-faire-matieres.jpg"
+      "body": "Baguettes en bois massif, passepartouts en carton muséal, verres anti-reflets ou conservation UV — chaque matériau est sélectionné pour sa qualité, sa durabilité et son rapport à l'œuvre encadrée. Nous travaillons exclusivement avec des fournisseurs européens partageant notre exigence.",
+      "image": ""
     },
     {
       "id": "processus",
       "title": "Le Processus",
       "body": "De la première consultation à la pose finale, chaque étape est conduite avec soin. Nous prenons le temps d'écouter vos attentes, d'étudier l'œuvre sous différentes lumières, de proposer plusieurs combinaisons avant de poser le premier coup de coupe. Rien n'est laissé au hasard.",
-      "image": "/images/savoir-faire-processus.jpg"
+      "image": ""
     },
     {
       "id": "clientele",
       "title": "Une clientèle d'exception",
       "body": "Collectionneurs, galeries parisiennes, institutions culturelles et particuliers passionnés — nous avons le privilège d'accompagner des projets d'une grande diversité. Chaque client apporte sa vision, et nous mettons notre expertise au service de cette singularité.",
-      "image": "/images/savoir-faire-clientele.jpg"
+      "image": ""
     }
   ]
 }

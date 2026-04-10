@@ -17,19 +17,13 @@ const config: Config = {
         border: '#DDDBD6',
       },
       fontFamily: {
-        cormorant: ['"Cormorant Garamond"', 'Georgia', 'serif'],
-        jost:      ['Jost', 'system-ui', 'sans-serif'],
+        power:      ['var(--font-power)', 'system-ui', 'sans-serif'],
+        instrument: ['var(--font-instrument)', 'system-ui', 'sans-serif'],
+        cormorant:  ['var(--font-cormorant)', 'Georgia', 'serif'],
       },
-      fontSize: {
-        '2xs': '11px',
-      },
-      letterSpacing: {
-        caps: '0.12em',
-      },
-      maxWidth: {
-        content: '680px',
-        wide:    '1160px',
-      },
+      fontSize: { '2xs': '11px' },
+      letterSpacing: { caps: '0.12em' },
+      maxWidth: { content: '680px', wide: '1160px' },
     },
   },
   plugins: [],
