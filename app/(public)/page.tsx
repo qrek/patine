@@ -26,7 +26,7 @@ export default async function HomePage() {
         <div className="absolute inset-0 bg-noir/25" />
 
         <div className="relative mt-auto px-5 lg:px-8 pb-14 max-w-wide mx-auto w-full">
-          <h1 className="font-power text-6xl md:text-8xl lg:text-9xl text-cream fade-in leading-[1.0]">
+          <h1 className="font-power text-[clamp(2.6rem,9vw,9rem)] text-cream fade-in leading-[1.0]">
             {c.hero.title || "L'art d'encadrer"}
           </h1>
           <div className="mt-5 flex items-end justify-between">

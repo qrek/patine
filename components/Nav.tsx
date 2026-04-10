@@ -84,7 +84,7 @@ export default function Nav({ logoSrc = '', logoSrcDark = '', logoWidth = 100 }:
         <nav className="space-y-8">
           {links.map(l => (
             <div key={l.href}>
-              <Link href={l.href} className="font-cormorant text-5xl text-noir hover:text-muted transition-colors duration-200">{l.label}</Link>
+              <Link href={l.href} className="font-power text-4xl text-noir hover:text-muted transition-colors duration-200">{l.label}</Link>
             </div>
           ))}
         </nav>

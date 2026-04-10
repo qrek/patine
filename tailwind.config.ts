@@ -10,7 +10,7 @@ const config: Config = {
     extend: {
       colors: {
         cream:  '#F5F3EF',
-        warm:   '#fff4eb',
+        warm:   '#e6e1d5',
         noir:   '#1C1C1A',
         'noir-soft': '#3A3A38',
         gold:   '#B8A87A',
