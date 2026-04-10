@@ -43,7 +43,7 @@ export default function ContactForm() {
         <label htmlFor="phone">Téléphone</label>
       </div>
       <div className="field">
-        <textarea name="message" id="message" rows={5} placeholder=" " required className="resize-none" />
+        <textarea name="message" id="message" rows={4} placeholder=" " required className="resize-none" />
         <label htmlFor="message">Message</label>
       </div>
 
