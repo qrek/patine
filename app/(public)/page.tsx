@@ -15,6 +15,7 @@ export default async function HomePage() {
   const heroPhotos = allPhotos.slice(0, 3)      // pour la grille réalisations
   const floatPhotos = allPhotos.slice(0, 4)     // pour les photos flottantes
   const subtitleSize = c.hero.subtitleSize ?? 14
+  const titleColor   = c.hero.titleColor || '#F5F3EF'
 
   // Bandeau photos : mélange aléatoire de l'instagramFeed
   const feedPhotos = [...(c.instagramFeed ?? [])].sort(() => Math.random() - 0.5)
@@ -39,7 +40,7 @@ export default async function HomePage() {
         <div className="absolute inset-0 bg-noir/25" />
 
         <div className="relative mt-auto px-5 lg:px-8 pb-14 max-w-wide mx-auto w-full">
-          <h1 className="font-power text-[clamp(2.6rem,9vw,9rem)] text-cream fade-in leading-[1.0]">
+          <h1 className="font-power text-[clamp(2.6rem,9vw,9rem)] fade-in leading-[1.0]" style={{ color: titleColor }}>
             {c.hero.title || "L'art d'encadrer"}
           </h1>
           <div className="mt-5 flex items-end justify-between">

@@ -6,13 +6,13 @@ import RichTextEditor from '@/components/RichTextEditor'
 
 interface InstagramPhoto { id: string; src: string; caption?: string }
 interface HomeContent {
-  hero: { title: string; subtitle: string; subtitleSize: number; image: string }
+  hero: { title: string; subtitle: string; subtitleSize: number; titleColor: string; image: string }
   intro: { column1: string; column2: string }
   instagramFeed: InstagramPhoto[]
 }
 
 const DEFAULT: HomeContent = {
-  hero: { title: "L'art d'encadrer", subtitle: 'Atelier d\'encadrement', subtitleSize: 14, image: '' },
+  hero: { title: "L'art d'encadrer", subtitle: 'Atelier d\'encadrement', subtitleSize: 14, titleColor: '#F5F3EF', image: '' },
   intro: { column1: '', column2: '' },
   instagramFeed: [],
 }
@@ -26,7 +26,7 @@ export default function AdminAccueil() {
     fetch('/api/admin/get?section=home')
       .then((r) => r.json())
       .then((d) => setContent({
-        hero: { ...DEFAULT.hero, ...d.hero },
+        hero: { ...DEFAULT.hero, ...d.hero, titleColor: d.hero?.titleColor ?? '#F5F3EF' },
         intro: { ...DEFAULT.intro, ...d.intro },
         instagramFeed: d.instagramFeed ?? [],
       }))
@@ -98,27 +98,55 @@ export default function AdminAccueil() {
           <h2 className="text-[13px] font-medium text-gray-700 border-b border-gray-100 pb-3">Section Hero</h2>
 
           <div>
-            <label className="block text-[11px] text-gray-400 mb-1.5">Titre principal</label>
+            <label className="block text-[11px] text-gray-400 mb-1">
+              Grand titre <span className="text-gray-300">(texte affiché en très grand sur la photo)</span>
+            </label>
             <input type="text" value={content.hero.title}
               onChange={(e) => setHero('title', e.target.value)}
+              placeholder="L'art d'encadrer"
               className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-gray-400"
             />
           </div>
 
           <div>
-            <label className="block text-[11px] text-gray-400 mb-1.5">Sous-titre (ex : Atelier d'encadrement)</label>
+            <label className="block text-[11px] text-gray-400 mb-1">
+              Couleur du grand titre
+            </label>
+            <div className="flex items-center gap-3">
+              <input
+                type="color"
+                value={content.hero.titleColor}
+                onChange={(e) => setHero('titleColor', e.target.value)}
+                className="w-10 h-9 rounded border border-gray-200 cursor-pointer p-0.5 bg-white"
+              />
+              <span className="text-[12px] text-gray-500 font-mono">{content.hero.titleColor}</span>
+              <button
+                type="button"
+                onClick={() => setHero('titleColor', '#F5F3EF')}
+                className="text-[11px] text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                Réinitialiser (crème)
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[11px] text-gray-400 mb-1">
+              Texte secondaire <span className="text-gray-300">(petite taille, sous le grand titre)</span>
+            </label>
             <input type="text" value={content.hero.subtitle}
               onChange={(e) => setHero('subtitle', e.target.value)}
+              placeholder="Atelier d'encadrement — Paris"
               className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-gray-400"
             />
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-[11px] text-gray-400">Taille du sous-titre</label>
+              <label className="text-[11px] text-gray-400">Taille du texte secondaire</label>
               <span className="text-[11px] font-medium text-gray-600">{content.hero.subtitleSize}px</span>
             </div>
-            <input type="range" min={10} max={32} step={1}
+            <input type="range" min={10} max={48} step={1}
               value={content.hero.subtitleSize}
               onChange={(e) => setHero('subtitleSize', Number(e.target.value))}
               className="w-full accent-gray-900"
