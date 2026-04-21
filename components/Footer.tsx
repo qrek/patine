@@ -3,6 +3,7 @@ import Link from 'next/link'
 interface FooterProps {
   text?: string
   instagram?: string
+  linkedin?: string
   email?: string
   phone?: string
   hours?: string
@@ -11,7 +12,7 @@ interface FooterProps {
   logoWidth?: number
 }
 
-export default function Footer({ text, instagram, email, phone, hours, address, logoSrc, logoWidth = 100 }: FooterProps) {
+export default function Footer({ text, instagram, linkedin, email, phone, hours, address, logoSrc, logoWidth = 100 }: FooterProps) {
   return (
     <footer className="border-t border-border bg-cream w-full">
 
@@ -78,11 +79,18 @@ export default function Footer({ text, instagram, email, phone, hours, address, 
                 Instagram ↗
               </a>
             )}
+            {linkedin && (
+              <a
+                href={linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-[13px] text-noir underline underline-offset-2 decoration-border hover:decoration-muted hover:text-muted transition-colors duration-200"
+              >
+                LinkedIn ↗
+              </a>
+            )}
             <Link href="/contact" className="block text-[13px] text-noir underline underline-offset-2 decoration-border hover:decoration-muted hover:text-muted transition-colors duration-200">
               Contact ↗
-            </Link>
-            <Link href="/savoir-faire" className="block text-[13px] text-noir underline underline-offset-2 decoration-border hover:decoration-muted hover:text-muted transition-colors duration-200">
-              Notre Savoir-faire ↗
             </Link>
           </div>
 

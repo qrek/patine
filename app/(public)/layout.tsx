@@ -11,6 +11,7 @@ export default async function PublicLayout({ children }: { children: React.React
       <Footer
         text={s.footer}
         instagram={s.instagram}
+        linkedin={s.linkedin}
         email={s.email}
         phone={s.phone}
         hours={s.hours}

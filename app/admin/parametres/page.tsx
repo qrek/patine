@@ -8,6 +8,7 @@ interface Settings {
   email: string
   phone: string
   instagram: string
+  linkedin: string
   hours: string
   footer: string
   logo: { src: string; srcDark: string; width: number }
@@ -18,6 +19,7 @@ const DEFAULT: Settings = {
   email: '',
   phone: '',
   instagram: '',
+  linkedin: '',
   hours: '',
   footer: '© 2025 Patine',
   logo: { src: '', srcDark: '', width: 100 },
@@ -30,7 +32,7 @@ export default function AdminParametres() {
   useEffect(() => {
     fetch('/api/admin/get?section=settings')
       .then((r) => r.json())
-      .then((d) => setSettings({ ...DEFAULT, ...d, hours: d.hours ?? '', logo: { ...DEFAULT.logo, ...(d.logo ?? {}) } as Settings['logo'] }))
+      .then((d) => setSettings({ ...DEFAULT, ...d, linkedin: d.linkedin ?? '', hours: d.hours ?? '', logo: { ...DEFAULT.logo, ...(d.logo ?? {}) } as Settings['logo'] }))
       .catch(() => {})
   }, [])
 
@@ -196,6 +198,12 @@ export default function AdminParametres() {
             <label className="block text-xs text-gray-500 mb-1.5">Lien Instagram</label>
             <input type="url" value={settings.instagram} onChange={(e) => set('instagram', e.target.value)}
               placeholder="https://www.instagram.com/..."
+              className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#B8A87A] transition-colors" />
+          </div>
+          <div>
+            <label className="block text-xs text-gray-500 mb-1.5">Lien LinkedIn</label>
+            <input type="url" value={settings.linkedin} onChange={(e) => set('linkedin', e.target.value)}
+              placeholder="https://www.linkedin.com/in/..."
               className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#B8A87A] transition-colors" />
           </div>
         </section>

@@ -14,12 +14,12 @@ export default async function ContactPage() {
 
       {/* ── Image (panneau gauche) ── */}
       {hasImage && (
-        <div className="relative h-[38vw] max-h-[55vh] md:h-auto md:max-h-none md:w-[40%] flex-shrink-0 overflow-hidden">
+        <div className="relative h-[55vw] max-h-[60vh] md:h-auto md:max-h-none md:w-[40%] flex-shrink-0 overflow-hidden">
           <Image
             src={s.contactImage!}
             alt="Atelier Patine"
             fill
-            className="object-cover"
+            className="object-cover object-center"
             priority
           />
         </div>

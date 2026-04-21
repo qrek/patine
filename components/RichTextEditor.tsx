@@ -5,7 +5,7 @@ import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import TextStyle from '@tiptap/extension-text-style'
 import FontFamily from '@tiptap/extension-font-family'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 interface RichTextEditorProps {
   value: string          // HTML
@@ -21,6 +21,8 @@ const FONTS = [
 ]
 
 export default function RichTextEditor({ value, onChange, placeholder = 'Tapez votre texte…', minHeight = 120 }: RichTextEditorProps) {
+  const isInternalUpdate = useRef(false)
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -30,6 +32,7 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Tapez v
     ],
     content: value || '',
     onUpdate({ editor }) {
+      isInternalUpdate.current = true
       onChange(editor.getHTML())
     },
     editorProps: {
@@ -40,9 +43,13 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Tapez v
     },
   })
 
-  // Sync external value changes (e.g. on load)
+  // Sync uniquement quand la valeur vient de l'extérieur (chargement initial)
   useEffect(() => {
     if (!editor) return
+    if (isInternalUpdate.current) {
+      isInternalUpdate.current = false
+      return
+    }
     if (editor.getHTML() !== value) {
       editor.commands.setContent(value || '', false)
     }

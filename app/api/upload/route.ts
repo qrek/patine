@@ -17,7 +17,7 @@ async function compress(buffer: Buffer): Promise<{ data: Buffer; ext: string }> 
     if (meta.width && meta.width > 1920) {
       proc = proc.resize(1920, undefined, { withoutEnlargement: true })
     }
-    const data = await proc.webp({ quality: 82 }).toBuffer()
+    const data = await proc.webp({ quality: 90 }).toBuffer()
     return { data, ext: 'webp' }
   } catch {
     return { data: buffer, ext: 'jpg' }

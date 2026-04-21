@@ -72,10 +72,14 @@ export default function Nav({ logoSrc = '', logoSrcDark = '', logoWidth = 100 }:
             ))}
           </nav>
 
-          <button className="md:hidden w-7 h-5 flex flex-col justify-between" onClick={() => setMenuOpen(o => !o)} aria-label="Menu">
-            <span className={`block h-[1.5px] transition-all duration-300 origin-center ${transparent ? 'bg-cream' : 'bg-noir'} ${menuOpen ? 'rotate-45 translate-y-[9px]' : ''}`} />
-            <span className={`block h-[1.5px] transition-all duration-200 ${transparent ? 'bg-cream' : 'bg-noir'} ${menuOpen ? 'opacity-0' : ''}`} />
-            <span className={`block h-[1.5px] transition-all duration-300 origin-center ${transparent ? 'bg-cream' : 'bg-noir'} ${menuOpen ? '-rotate-45 -translate-y-[9px]' : ''}`} />
+          <button
+            className="md:hidden flex flex-col justify-center items-center gap-[5px] w-10 h-10 -mr-2"
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label="Menu"
+          >
+            <span className={`block w-6 h-[2px] rounded-full transition-all duration-300 origin-center ${transparent ? 'bg-cream' : 'bg-noir'} ${menuOpen ? 'rotate-45 translate-y-[7px]' : ''}`} />
+            <span className={`block w-6 h-[2px] rounded-full transition-all duration-200 ${transparent ? 'bg-cream' : 'bg-noir'} ${menuOpen ? 'opacity-0' : ''}`} />
+            <span className={`block w-6 h-[2px] rounded-full transition-all duration-300 origin-center ${transparent ? 'bg-cream' : 'bg-noir'} ${menuOpen ? '-rotate-45 -translate-y-[7px]' : ''}`} />
           </button>
         </div>
       </header>

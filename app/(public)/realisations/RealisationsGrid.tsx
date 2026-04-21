@@ -48,12 +48,22 @@ function PhotoCard({ photo, index, onClick }: { photo: Photo; index: number; onC
           className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
           sizes="(max-width:640px) 100vw, (max-width:1024px) 50vw, 33vw"
         />
+        {/* Overlay hover avec titre */}
+        {(photo.title || photo.caption) && (
+          <div className="absolute inset-0 bg-noir/0 group-hover:bg-noir/40 transition-colors duration-400 flex items-end">
+            <div className="w-full p-4 translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-400">
+              {photo.title   && <p className="text-[14px] font-medium text-cream leading-tight">{photo.title}</p>}
+              {photo.caption && <p className="text-[12px] text-cream/70 mt-0.5">{photo.caption}</p>}
+            </div>
+          </div>
+        )}
       </div>
 
+      {/* Légende permanente sous l'image */}
       {(photo.title || photo.caption) && (
-        <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-noir/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          {photo.title   && <p className="font-cormorant text-lg text-cream">{photo.title}</p>}
-          {photo.caption && <p className="text-[12px] text-cream/60 mt-0.5">{photo.caption}</p>}
+        <div className="px-1 py-2 text-left">
+          {photo.title   && <p className="text-[12px] text-noir/70 leading-tight">{photo.title}</p>}
+          {photo.caption && <p className="text-[11px] text-muted mt-0.5">{photo.caption}</p>}
         </div>
       )}
     </button>

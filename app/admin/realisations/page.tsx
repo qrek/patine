@@ -65,11 +65,12 @@ export default function AdminRealisations() {
             src: path,
             title: '',
             caption: '',
-            order: photos.length + newPhotos.length,
+            order: 0,
           })
         }
       }
-      const updated = [...photos, ...newPhotos]
+      // Nouvelles photos en premier, puis les existantes
+      const updated = [...newPhotos, ...photos].map((p, i) => ({ ...p, order: i }))
       setPhotos(updated)
       await save(updated)
     } catch (e) {

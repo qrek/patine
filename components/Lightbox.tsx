@@ -80,36 +80,28 @@ export default function Lightbox({
         </button>
       )}
 
-      {/* Image */}
+      {/* Image + légende */}
       <div
-        className="relative max-w-[90vw] max-h-[85vh] w-full h-full flex items-center justify-center"
+        className="flex flex-col items-center gap-3 max-w-[90vw]"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative w-full h-full flex items-center justify-center">
-          <Image
-            src={photo.src}
-            alt={photo.title || photo.caption || ''}
-            width={1200}
-            height={900}
-            className="object-contain max-w-full max-h-[80vh]"
-            priority
-          />
-        </div>
+        <Image
+          src={photo.src}
+          alt={photo.title || photo.caption || ''}
+          width={1200}
+          height={900}
+          className="object-contain max-w-full max-h-[78vh]"
+          priority
+        />
         {(photo.title || photo.caption) && (
-          <div className="absolute bottom-0 left-0 right-0 text-center pb-2">
+          <div className="text-center px-4">
             {photo.title && (
-              <p
-                className="text-white/90 font-cormorant italic text-lg"
-                style={{ fontFamily: 'var(--font-cormorant)' }}
-              >
+              <p className="text-white/90 text-[15px] font-medium">
                 {photo.title}
               </p>
             )}
             {photo.caption && (
-              <p
-                className="text-white/50 text-xs tracking-wide mt-1"
-                style={{ fontFamily: 'var(--font-jost)', fontWeight: 300 }}
-              >
+              <p className="text-white/50 text-xs tracking-wide mt-1">
                 {photo.caption}
               </p>
             )}

@@ -24,7 +24,7 @@ export default function InstagramScroll({ photos }: { photos: Photo[] }) {
           <div
             key={photo.id}
             className="relative flex-shrink-0 snap-start overflow-hidden bg-[#D8D6D1] group"
-            style={{ width: 'clamp(200px, 28vw, 380px)', aspectRatio: '1/1' }}
+            style={{ width: 'clamp(120px, 16vw, 200px)', aspectRatio: '1/1' }}
           >
             <Image
               src={photo.src}

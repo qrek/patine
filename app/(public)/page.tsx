@@ -4,6 +4,7 @@ import { getHome, getSavoirFaire, getRealisations } from '@/lib/content'
 import Reveal from '@/components/Reveal'
 import HeroParallax from '@/components/HeroParallax'
 import FloatingIntro from './FloatingIntro'
+import InstagramScroll from './InstagramScroll'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,6 +15,9 @@ export default async function HomePage() {
   const heroPhotos = allPhotos.slice(0, 3)      // pour la grille réalisations
   const floatPhotos = allPhotos.slice(0, 4)     // pour les photos flottantes
   const subtitleSize = c.hero.subtitleSize ?? 14
+
+  // Bandeau photos : mélange aléatoire de l'instagramFeed
+  const feedPhotos = [...(c.instagramFeed ?? [])].sort(() => Math.random() - 0.5)
 
   // Texte d'intro — strip HTML pour l'affichage en gros plan
   const introText = (c.intro.column1 || '')
@@ -42,8 +46,8 @@ export default async function HomePage() {
             <p className="tracking-caps uppercase text-cream/70 fade-in-2" style={{ fontSize: subtitleSize }}>
               {c.hero.subtitle || 'Atelier Patine — Paris'}
             </p>
-            <Link href="#intro" className="text-2xs tracking-caps uppercase text-cream/60 hover:text-cream transition-colors duration-200 fade-in-3">
-              Découvrir ↓
+            <Link href="#intro" className="text-cream/60 hover:text-cream transition-colors duration-200 fade-in-3 text-xl leading-none">
+              ↓
             </Link>
           </div>
         </div>
@@ -104,6 +108,13 @@ export default async function HomePage() {
               Voir toutes les réalisations ↗
             </Link>
           </Reveal>
+        </section>
+      )}
+
+      {/* ── Bandeau photos ── */}
+      {feedPhotos.length > 0 && (
+        <section className="border-t border-border py-5">
+          <InstagramScroll photos={feedPhotos} />
         </section>
       )}
     </>

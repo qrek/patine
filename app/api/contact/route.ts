@@ -32,8 +32,12 @@ export async function POST(req: NextRequest) {
       const { Resend } = await import('resend')
       const resend = new Resend(process.env.RESEND_API_KEY)
 
+      // RESEND_FROM doit être une adresse sur un domaine vérifié dans Resend
+      // Ex: RESEND_FROM="Patine <noreply@patine.fr>"
+      const fromAddress = process.env.RESEND_FROM || 'onboarding@resend.dev'
+
       await resend.emails.send({
-        from: 'Patine <noreply@patine.fr>',
+        from: fromAddress,
         to: contactEmail,
         reply_to: body.email,
         subject: `Nouveau message de ${body.name}`,
@@ -60,12 +64,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true })
     }
 
-    // ── Option B : fallback — log en dev, succès silencieux en prod ───────────
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[contact] Message reçu:', body)
-    }
-
-    return NextResponse.json({ success: true })
+    // ── Fallback : aucun service email configuré ──────────────────────────────
+    console.error('[contact] RESEND_API_KEY non configuré — message non envoyé:', body)
+    return NextResponse.json({ error: 'Service email non configuré' }, { status: 503 })
   } catch (err) {
     console.error('[contact] Error:', err)
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })

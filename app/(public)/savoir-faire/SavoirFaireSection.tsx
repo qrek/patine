@@ -15,7 +15,7 @@ interface Props {
 
 const EASE = [0.16, 1, 0.3, 1] as const
 
-export default function SavoirFaireSection({ title, body, imageSrc, index, total, reversed, warm }: Props) {
+export default function SavoirFaireSection({ title, body, imageSrc, reversed, warm }: Props) {
   return (
     <section className={`grid grid-cols-1 lg:grid-cols-2 min-h-[88vh] border-t border-border ${warm ? 'bg-warm' : 'bg-cream'}`}>
 
@@ -48,9 +48,6 @@ export default function SavoirFaireSection({ title, body, imageSrc, index, total
         transition={{ duration: 1.9, ease: EASE, delay: 0.28 }}
         className={`flex flex-col justify-center px-8 lg:px-16 xl:px-20 py-20 ${reversed ? 'lg:order-1' : 'lg:order-2'}`}
       >
-        <p className="text-[10px] tracking-[0.22em] uppercase text-muted mb-10">
-          {String(index + 1).padStart(2, '0')}&nbsp;&nbsp;/&nbsp;&nbsp;{String(total).padStart(2, '0')}
-        </p>
         <h2 className="font-power text-4xl xl:text-5xl text-noir leading-[1.05] mb-8">
           {title}
         </h2>

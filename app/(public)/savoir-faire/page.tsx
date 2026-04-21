@@ -31,24 +31,6 @@ export default async function SavoirFairePage() {
         />
       ))}
 
-      {/* ── Frise galerie ── */}
-      {gallery.some(Boolean) && (
-        <section className="grid grid-cols-2 md:grid-cols-4 border-t border-border">
-          {gallery.slice(0, 4).map((src, i) => (
-            <div key={i} className="relative aspect-square overflow-hidden bg-[#E0DEDB]">
-              {src ? (
-                <img
-                  src={src}
-                  alt={`Galerie ${i + 1}`}
-                  className="w-full h-full object-cover hover:scale-[1.04] transition-transform duration-700"
-                />
-              ) : (
-                <div className="absolute inset-0 bg-[#D8D6D1]" />
-              )}
-            </div>
-          ))}
-        </section>
-      )}
 
     </div>
   )

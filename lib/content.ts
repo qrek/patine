@@ -58,6 +58,7 @@ export interface SettingsContent {
   email: string
   phone: string
   instagram: string
+  linkedin?: string
   hours: string
   footer: string
   logo: { src: string; srcDark: string; width: number }
