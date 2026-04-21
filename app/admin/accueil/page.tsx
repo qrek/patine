@@ -6,13 +6,13 @@ import RichTextEditor from '@/components/RichTextEditor'
 
 interface InstagramPhoto { id: string; src: string; caption?: string }
 interface HomeContent {
-  hero: { title: string; subtitle: string; subtitleSize: number; titleColor: string; image: string }
+  hero: { title: string; subtitle: string; subtitleSize: number; titleColor: string; titleSize: number; titleWeight: number; image: string }
   intro: { column1: string; column2: string }
   instagramFeed: InstagramPhoto[]
 }
 
 const DEFAULT: HomeContent = {
-  hero: { title: "L'art d'encadrer", subtitle: 'Atelier d\'encadrement', subtitleSize: 14, titleColor: '#F5F3EF', image: '' },
+  hero: { title: "L'art d'encadrer", subtitle: 'Atelier d\'encadrement', subtitleSize: 14, titleColor: '#F5F3EF', titleSize: 9, titleWeight: 400, image: '' },
   intro: { column1: '', column2: '' },
   instagramFeed: [],
 }
@@ -26,7 +26,7 @@ export default function AdminAccueil() {
     fetch('/api/admin/get?section=home')
       .then((r) => r.json())
       .then((d) => setContent({
-        hero: { ...DEFAULT.hero, ...d.hero, titleColor: d.hero?.titleColor ?? '#F5F3EF' },
+        hero: { ...DEFAULT.hero, ...d.hero, titleColor: d.hero?.titleColor ?? '#F5F3EF', titleSize: d.hero?.titleSize ?? 9, titleWeight: d.hero?.titleWeight ?? 400 },
         intro: { ...DEFAULT.intro, ...d.intro },
         instagramFeed: d.instagramFeed ?? [],
       }))
@@ -127,6 +127,47 @@ export default function AdminAccueil() {
               >
                 Réinitialiser (crème)
               </button>
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[11px] text-gray-400">Taille du grand titre</label>
+              <span className="text-[11px] font-medium text-gray-600">{content.hero.titleSize} rem (max)</span>
+            </div>
+            <input type="range" min={3} max={14} step={0.5}
+              value={content.hero.titleSize}
+              onChange={(e) => setHero('titleSize', Number(e.target.value))}
+              className="w-full accent-gray-900"
+            />
+            <div className="flex justify-between text-[10px] text-gray-300 mt-0.5">
+              <span>Petit</span><span>Très grand</span>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[11px] text-gray-400 mb-2">Graisse du grand titre</label>
+            <div className="flex flex-wrap gap-1.5">
+              {([
+                { value: 300, label: 'Light' },
+                { value: 400, label: 'Regular' },
+                { value: 500, label: 'Medium' },
+                { value: 600, label: 'Semi-bold' },
+                { value: 700, label: 'Bold' },
+              ] as const).map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setHero('titleWeight', value)}
+                  className={`px-3 py-1 text-[11px] rounded border transition-colors ${
+                    content.hero.titleWeight === value
+                      ? 'bg-gray-900 text-white border-gray-900'
+                      : 'text-gray-500 border-gray-200 hover:border-gray-400'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
 

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Cormorant_Garamond, Instrument_Sans } from 'next/font/google'
 import './globals.css'
 import SmoothScroll from '@/components/SmoothScroll'
+import SiteLoader from '@/components/SiteLoader'
 
 const instrumentSans = Instrument_Sans({
   subsets: ['latin'],
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className={`${instrumentSans.variable} ${cormorant.variable}`}>
       <body>
+        <SiteLoader />
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>

@@ -1,5 +1,5 @@
 import Nav from '@/components/Nav'
-import Footer from '@/components/Footer'
+import FooterConditional from './FooterConditional'
 import { getSettings } from '@/lib/content'
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
@@ -8,7 +8,7 @@ export default async function PublicLayout({ children }: { children: React.React
     <div className="flex flex-col min-h-screen">
       <Nav logoSrc={s.logo?.src ?? ''} logoSrcDark={s.logo?.srcDark ?? ''} logoWidth={s.logo?.width ?? 100} />
       <main className="flex-1">{children}</main>
-      <Footer
+      <FooterConditional
         text={s.footer}
         instagram={s.instagram}
         linkedin={s.linkedin}

@@ -10,21 +10,28 @@ export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   const [c, sf, real] = await Promise.all([getHome(), getSavoirFaire(), getRealisations()])
-  const sections   = sf.sections ?? []
-  const allPhotos  = [...(real.photos ?? [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-  const heroPhotos = allPhotos.slice(0, 3)      // pour la grille réalisations
-  const floatPhotos = allPhotos.slice(0, 4)     // pour les photos flottantes
-  const subtitleSize = c.hero.subtitleSize ?? 14
-  const titleColor   = c.hero.titleColor || '#F5F3EF'
+  const allPhotos   = [...(real.photos ?? [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+  const heroPhotos  = allPhotos.slice(0, 3)
+  const floatPhotos = allPhotos.slice(0, 4)
+
+  const subtitleSize  = c.hero.subtitleSize ?? 14
+  const titleColor    = c.hero.titleColor   || '#F5F3EF'
+  const titleSize     = c.hero.titleSize    ?? 9
+  const titleWeight   = c.hero.titleWeight  ?? 400
 
   // Bandeau photos : mélange aléatoire de l'instagramFeed
   const feedPhotos = [...(c.instagramFeed ?? [])].sort(() => Math.random() - 0.5)
 
-  // Texte d'intro — strip HTML pour l'affichage en gros plan
+  // Texte intro (FloatingIntro) — strip HTML
   const introText = (c.intro.column1 || '')
-    .replace(/<[^>]+>/g, '')
-    .replace(/&nbsp;/g, ' ')
-    .trim()
+    .replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim()
+
+  // Texte éditorial savoir-faire — strip HTML, tronqué
+  const editorialRaw = (c.intro.column2 || '')
+    .replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim()
+  const editorialText = editorialRaw.length > 220
+    ? editorialRaw.slice(0, 220).trimEnd()
+    : editorialRaw
 
   return (
     <>
@@ -39,8 +46,15 @@ export default async function HomePage() {
         )}
         <div className="absolute inset-0 bg-noir/25" />
 
-        <div className="relative mt-auto px-5 lg:px-8 pb-14 max-w-wide mx-auto w-full">
-          <h1 className="font-power text-[clamp(2.6rem,9vw,9rem)] fade-in leading-[1.0]" style={{ color: titleColor }}>
+        <div className="relative mt-auto px-5 lg:px-6 pb-14 w-full">
+          <h1
+            className="font-power fade-in leading-[1.0]"
+            style={{
+              color: titleColor,
+              fontSize: `clamp(2.6rem, 9vw, ${titleSize}rem)`,
+              fontWeight: titleWeight,
+            }}
+          >
             {c.hero.title || "L'art d'encadrer"}
           </h1>
           <div className="mt-5 flex items-end justify-between">
@@ -54,36 +68,38 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Intro flottante ── */}
+      {/* ── Intro flottante (sticky scroll) ── */}
       {introText && (
         <FloatingIntro text={introText} photos={floatPhotos} />
       )}
 
-      {/* ── Savoir-faire ── */}
-      {sections.length > 0 && (
-        <section className="border-t border-border">
-          <div className="max-w-wide mx-auto px-5 lg:px-8 py-20 md:py-28">
+      {/* ── Savoir-faire — texte éditorial ── */}
+      {editorialText && (
+        <section className="border-t border-border bg-cream overflow-hidden">
+          <div className="px-5 lg:px-6 py-20 md:py-28 max-w-[1440px] mx-auto">
             <Reveal>
-              <p className="text-2xs tracking-caps uppercase text-muted mb-14">Notre Savoir-faire</p>
+              <p className="text-2xs tracking-caps uppercase text-muted mb-10">Notre Savoir-faire</p>
             </Reveal>
-            <div className="grid md:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-border">
-              {sections.map((s, i) => (
-                <Reveal key={s.id} delay={i * 0.14} className="py-10 md:py-0 md:px-10 first:pl-0 last:pr-0">
-                  <h3 className="font-power text-xl text-noir mb-4">{s.title}</h3>
-                  {s.body && (
-                    <div
-                      className="text-[14px] leading-relaxed text-noir-soft line-clamp-4 rich-text"
-                      dangerouslySetInnerHTML={{ __html: s.body }}
-                    />
-                  )}
-                </Reveal>
-              ))}
-            </div>
-            <Reveal delay={0.2} className="mt-14 pt-10 border-t border-border">
-              <Link href="/savoir-faire" className="text-2xs tracking-caps uppercase text-noir border-b border-noir pb-0.5 hover:text-muted hover:border-muted transition-colors duration-200">
-                En savoir plus ↗
-              </Link>
+            <Reveal delay={0.15}>
+              <p className="font-cormorant text-[clamp(1.9rem,3.8vw,4.2rem)] text-noir leading-[1.18] max-w-[1100px]">
+                {editorialText}
+                {editorialRaw.length > 220 && (
+                  <Link
+                    href="/savoir-faire"
+                    className="inline-block ml-2 text-[0.6em] tracking-caps uppercase text-muted border-b border-muted pb-0.5 hover:text-noir hover:border-noir transition-colors duration-200 align-middle"
+                  >
+                    En savoir plus ↗
+                  </Link>
+                )}
+              </p>
             </Reveal>
+            {editorialRaw.length <= 220 && (
+              <Reveal delay={0.3} className="mt-10">
+                <Link href="/savoir-faire" className="text-2xs tracking-caps uppercase text-noir border-b border-noir pb-0.5 hover:text-muted hover:border-muted transition-colors duration-200">
+                  En savoir plus ↗
+                </Link>
+              </Reveal>
+            )}
           </div>
         </section>
       )}
@@ -104,7 +120,7 @@ export default async function HomePage() {
               </Reveal>
             ))}
           </div>
-          <Reveal className="max-w-wide mx-auto px-5 lg:px-8 py-8 border-t border-border">
+          <Reveal className="px-5 lg:px-6 py-8 border-t border-border">
             <Link href="/realisations" className="text-2xs tracking-caps uppercase text-noir border-b border-noir pb-0.5 hover:text-muted hover:border-muted transition-colors duration-200">
               Voir toutes les réalisations ↗
             </Link>

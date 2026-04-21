@@ -52,7 +52,7 @@ export default function Nav({ logoSrc = '', logoSrcDark = '', logoWidth = 100 }:
   return (
     <>
       <header className={`fixed top-0 inset-x-0 z-50 transition-colors duration-300 ${transparent ? 'bg-transparent' : 'bg-cream border-b border-border'}`}>
-        <div className="max-w-wide mx-auto px-5 lg:px-8 h-16 flex items-center justify-between">
+        <div className="px-5 lg:px-6 h-16 flex items-center justify-between">
 
           <Link href="/" className="flex-shrink-0 flex items-center transition-opacity duration-300 hover:opacity-70">
             {renderLogo()}

@@ -22,7 +22,7 @@ export interface InstagramPhoto {
 }
 
 export interface HomeContent {
-  hero: { title: string; subtitle: string; subtitleSize?: number; titleColor?: string; image: string }
+  hero: { title: string; subtitle: string; subtitleSize?: number; titleColor?: string; titleSize?: number; titleWeight?: number; image: string }
   intro: { column1: string; column2: string }
   instagramFeed?: InstagramPhoto[]
 }
