@@ -53,9 +53,10 @@ export default function SavoirFaireScroll({ sections, heroImage, gallery, footer
   useEffect(() => {
     const handleScroll = () => {
       if (!containerRef.current) return
-      const containerTop = containerRef.current.offsetTop
+      // getBoundingClientRect + scrollY pour un calcul toujours correct
+      const rect = containerRef.current.getBoundingClientRect()
+      const containerTop = rect.top + window.scrollY
       const relativeScroll = Math.max(0, window.scrollY - containerTop)
-      // 65vh threshold: section changes when 65% of viewport has been scrolled past
       const idx = Math.min(
         totalPanels - 1,
         Math.max(0, Math.floor((relativeScroll + window.innerHeight * 0.35) / window.innerHeight))
@@ -208,7 +209,7 @@ export default function SavoirFaireScroll({ sections, heroImage, gallery, footer
       </div>
 
       {/* ── Mobile : sections empilées ── */}
-      <div className="lg:hidden">
+      <div className="lg:hidden pt-16">
         {sections.map((section, i) => (
           <div key={section.id} className={i > 0 ? 'border-t border-border' : ''}>
             <div className="relative aspect-[4/3] bg-[#D8D6D1] overflow-hidden">

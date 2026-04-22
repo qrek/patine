@@ -11,13 +11,11 @@ export default async function SavoirFairePage() {
   const sections  = (data.sections ?? []).filter(s => s.title || s.body)
 
   return (
-    <div className="pt-16">
-      <SavoirFaireScroll
-        sections={sections}
-        heroImage={heroImage}
-        gallery={gallery}
-        footerSettings={settings}
-      />
-    </div>
+    <SavoirFaireScroll
+      sections={sections}
+      heroImage={heroImage}
+      gallery={gallery}
+      footerSettings={settings}
+    />
   )
 }

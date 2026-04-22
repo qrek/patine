@@ -5,6 +5,7 @@ import Reveal from '@/components/Reveal'
 import HeroParallax from '@/components/HeroParallax'
 import FloatingIntro from './FloatingIntro'
 import InstagramScroll from './InstagramScroll'
+import ScrollHint from '@/components/ScrollHint'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,14 +20,11 @@ export default async function HomePage() {
   const titleSize     = c.hero.titleSize    ?? 9
   const titleWeight   = c.hero.titleWeight  ?? 400
 
-  // Bandeau photos : mélange aléatoire de l'instagramFeed
   const feedPhotos = [...(c.instagramFeed ?? [])].sort(() => Math.random() - 0.5)
 
-  // Texte intro (FloatingIntro) — strip HTML
-  const introText = (c.intro.column1 || '')
-    .replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim()
+  const introHtml    = c.intro.column1 || ''
+  const introText    = introHtml.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim()
 
-  // Texte éditorial savoir-faire — strip HTML, tronqué
   const editorialRaw = (c.intro.column2 || '')
     .replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim()
   const editorialText = editorialRaw.length > 220
@@ -36,7 +34,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ── Hero ── */}
-      <section className="relative h-screen flex flex-col overflow-hidden">
+      <section className="relative h-[88vh] flex flex-col overflow-hidden">
         {c.hero.image ? (
           <HeroParallax>
             <Image src={c.hero.image} alt="Atelier Patine" fill className="object-cover" priority />
@@ -45,6 +43,8 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-[#D8D6D1]" />
         )}
         <div className="absolute inset-0 bg-noir/25" />
+        {/* gradient hint vers le bas */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-noir/30 to-transparent pointer-events-none" />
 
         <div className="relative mt-auto px-5 lg:px-6 pb-14 w-full">
           <h1
@@ -61,16 +61,28 @@ export default async function HomePage() {
             <p className="tracking-caps uppercase text-cream/70 fade-in-2" style={{ fontSize: subtitleSize }}>
               {c.hero.subtitle || 'Atelier Patine — Paris'}
             </p>
-            <Link href="#intro" className="text-cream/60 hover:text-cream transition-colors duration-200 fade-in-3 text-xl leading-none">
-              ↓
-            </Link>
+            <ScrollHint />
           </div>
         </div>
       </section>
 
+      {/* ── Intro — texte paragraphes ── */}
+      {introHtml && (
+        <section id="intro" className="bg-warm border-b border-border/40">
+          <div className="px-5 lg:px-6 py-16 md:py-24 max-w-[1440px] mx-auto">
+            <Reveal>
+              <div
+                className="text-[16px] md:text-[17px] leading-[1.9] text-noir-soft max-w-[720px] rich-text"
+                dangerouslySetInnerHTML={{ __html: introHtml }}
+              />
+            </Reveal>
+          </div>
+        </section>
+      )}
+
       {/* ── Savoir-faire — texte éditorial ── */}
       {editorialText && (
-        <section className="border-t border-border bg-cream overflow-hidden">
+        <section className="border-b border-border bg-cream overflow-hidden">
           <div className="px-5 lg:px-6 py-20 md:py-28 max-w-[1440px] mx-auto">
             <Reveal>
               <p className="text-2xs tracking-caps uppercase text-muted mb-10">Notre Savoir-faire</p>

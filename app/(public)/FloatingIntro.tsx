@@ -36,8 +36,12 @@ function FloatingPhoto({
     config.parallaxFactor * -120,
     config.parallaxFactor * 120,
   ])
-  const mx = useTransform(mouseX, (v: number) => v * config.depth)
-  const my = useTransform(mouseY, (v: number) => v * config.depth)
+  const mx       = useTransform(mouseX, (v: number) => v * config.depth)
+  const myMouse  = useTransform(mouseY, (v: number) => v * config.depth)
+  const combinedY = useTransform(
+    [scrollParallax, myMouse] as const,
+    ([s, m]: number[]) => s + m
+  )
 
   return (
     <motion.div
@@ -48,7 +52,7 @@ function FloatingPhoto({
         width: config.width,
         rotate: config.rotate,
         x: mx,
-        y: useTransform([scrollParallax, my], ([s, m]) => (s as number) + (m as number)),
+        y: combinedY,
       }}
       initial={{ opacity: 0, scale: 0.88 }}
       whileInView={{ opacity: 1, scale: 1 }}
@@ -75,9 +79,9 @@ function WordReveal({ text, mouseX, mouseY }: {
   mouseX: SpringValue
   mouseY: SpringValue
 }) {
-  const words = text.split(' ')
-  const rotateX = useTransform(mouseY, (v: number) => v * -6)
-  const rotateY = useTransform(mouseX, (v: number) => v * 6)
+  const words    = text.split(' ')
+  const rotateX  = useTransform(mouseY, (v: number) => v * -6)
+  const rotateY  = useTransform(mouseX, (v: number) => v * 6)
 
   return (
     <motion.div
@@ -111,7 +115,6 @@ function WordReveal({ text, mouseX, mouseY }: {
 
 export default function FloatingIntro({ text, photos }: { text: string; photos: Photo[] }) {
   const sectionRef = useRef<HTMLDivElement>(null)
-  const innerRef   = useRef<HTMLDivElement>(null)
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -124,7 +127,7 @@ export default function FloatingIntro({ text, photos }: { text: string; photos: 
   const mouseY = useSpring(rawMouseY, { stiffness: 45, damping: 20 })
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = innerRef.current?.getBoundingClientRect()
+    const rect = sectionRef.current?.getBoundingClientRect()
     if (!rect) return
     rawMouseX.set((e.clientX - rect.left) / rect.width * 2 - 1)
     rawMouseY.set((e.clientY - rect.top)  / rect.height * 2 - 1)
@@ -137,12 +140,13 @@ export default function FloatingIntro({ text, photos }: { text: string; photos: 
   return (
     <div
       ref={sectionRef}
-      id="intro"
+      id="intro-photos"
       className="relative min-h-[75vh] py-32 md:py-52 flex items-center justify-center bg-warm overflow-hidden"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      <div ref={innerRef} className="absolute inset-0 pointer-events-none">
+      {/* Photos absolues */}
+      <div className="absolute inset-0">
         {CONFIGS.map((config, i) =>
           photos[i] ? (
             <FloatingPhoto

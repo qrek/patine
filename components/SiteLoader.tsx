@@ -10,33 +10,40 @@ interface Props {
 }
 
 export default function SiteLoader({ logoSrc = '', logoSrcDark = '', logoWidth = 120 }: Props) {
-  const [done, setDone] = useState(false)
+  const [done, setDone]         = useState(false)
+  const [progress, setProgress] = useState(0)
 
   useEffect(() => {
     const minTime = 1600
-    const start = Date.now()
+    const start   = Date.now()
+
+    const intervalId = window.setInterval(() => {
+      setProgress(p => Math.min(p + Math.random() * 11 + 4, 91))
+    }, 110)
+
     const finish = () => {
+      clearInterval(intervalId)
+      setProgress(100)
       const elapsed = Date.now() - start
       setTimeout(() => setDone(true), Math.max(0, minTime - elapsed) + 300)
     }
+
     if (document.readyState === 'complete') {
       finish()
     } else {
       window.addEventListener('load', finish, { once: true })
-      const t = setTimeout(() => setDone(true), 3500)
-      return () => clearTimeout(t)
+      const t = setTimeout(finish, 3500)
+      return () => { clearTimeout(t); clearInterval(intervalId) }
     }
+
+    return () => clearInterval(intervalId)
   }, [])
 
-  const logoEl = (() => {
-    if (logoSrcDark) return <img src={logoSrcDark} alt="Patine" style={{ width: logoWidth, height: 'auto' }} className="object-contain" />
-    if (logoSrc)     return <img src={logoSrc}     alt="Patine" style={{ width: logoWidth, height: 'auto' }} className="object-contain brightness-0 invert" />
-    return (
-      <span className="font-cormorant text-[#F5F3EF] tracking-[0.45em] text-4xl uppercase">
-        Patine
-      </span>
-    )
-  })()
+  const logoEl = logoSrcDark
+    ? <img src={logoSrcDark} alt="Patine" style={{ width: logoWidth, height: 'auto' }} className="object-contain" />
+    : logoSrc
+      ? <img src={logoSrc} alt="Patine" style={{ width: logoWidth, height: 'auto' }} className="object-contain brightness-0 invert" />
+      : <span className="font-cormorant text-[#F5F3EF] tracking-[0.45em] text-4xl uppercase">Patine</span>
 
   return (
     <AnimatePresence>
@@ -54,6 +61,16 @@ export default function SiteLoader({ logoSrc = '', logoSrcDark = '', logoWidth =
           >
             {logoEl}
           </motion.div>
+
+          {/* Pourcentage */}
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 font-mono text-[11px] text-[#F5F3EF]/28 tracking-[0.25em]"
+          >
+            {String(Math.min(100, Math.round(progress))).padStart(3, '0')}
+          </motion.span>
         </motion.div>
       )}
     </AnimatePresence>
