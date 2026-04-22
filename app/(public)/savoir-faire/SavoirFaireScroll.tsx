@@ -25,16 +25,13 @@ const titleVariants = {
   exit:    { opacity: 0, y: -28, filter: 'blur(4px)', transition: { duration: 0.45, ease: [0.76, 0, 0.24, 1] } },
 }
 
-const bodyVariants = {
-  hidden: { opacity: 0, y: 36, filter: 'blur(4px)' },
-  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 1.1, ease: EASE, delay: 0.32 } },
-  exit:    { opacity: 0, y: -20, transition: { duration: 0.35, ease: [0.76, 0, 0.24, 1] } },
-}
-
-const labelVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.7, ease: EASE } },
-  exit:    { opacity: 0, transition: { duration: 0.25 } },
+function parseLines(html: string): string[] {
+  return html
+    .replace(/<\/p>/gi, '</p>\u0000')
+    .replace(/<br\s*\/?>/gi, '\u0000')
+    .split('\u0000')
+    .map(s => s.trim())
+    .filter(Boolean)
 }
 
 export default function SavoirFaireScroll({ sections, heroImage, gallery, footerSettings }: Props) {
@@ -120,14 +117,18 @@ export default function SavoirFaireScroll({ sections, heroImage, gallery, footer
                     {sections[active]?.title}
                   </motion.h2>
                   {sections[active]?.body && (
-                    <motion.div
-                      variants={bodyVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      className="text-[15px] leading-[1.85] text-noir-soft max-w-[420px] rich-text"
-                      dangerouslySetInnerHTML={{ __html: sections[active].body }}
-                    />
+                    <div className="text-[15px] leading-[1.85] text-noir-soft max-w-[420px] rich-text space-y-[0.4em]">
+                      {parseLines(sections[active].body).map((line, i) => (
+                        <motion.div
+                          key={`${active}-${i}`}
+                          initial={{ opacity: 0, y: 14, filter: 'blur(3px)' }}
+                          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.75, ease: EASE, delay: 0.42 + i * 0.13 }}
+                          dangerouslySetInnerHTML={{ __html: line }}
+                        />
+                      ))}
+                    </div>
                   )}
                 </motion.div>
               )}

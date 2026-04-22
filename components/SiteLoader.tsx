@@ -67,7 +67,7 @@ export default function SiteLoader({ logoSrc = '', logoSrcDark = '', logoWidth =
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.5 }}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 font-mono text-[11px] text-[#F5F3EF]/28 tracking-[0.25em]"
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 font-power text-[13px] text-[#F5F3EF]/60 tracking-[0.2em]"
           >
             {String(Math.min(100, Math.round(progress))).padStart(3, '0')}
           </motion.span>
