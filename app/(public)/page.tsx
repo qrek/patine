@@ -68,11 +68,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Intro flottante (sticky scroll) ── */}
-      {introText && (
-        <FloatingIntro text={introText} photos={floatPhotos} />
-      )}
-
       {/* ── Savoir-faire — texte éditorial ── */}
       {editorialText && (
         <section className="border-t border-border bg-cream overflow-hidden">
@@ -102,6 +97,11 @@ export default async function HomePage() {
             )}
           </div>
         </section>
+      )}
+
+      {/* ── Intro flottante ── */}
+      {introText && (
+        <FloatingIntro text={introText} photos={floatPhotos} />
       )}
 
       {/* ── Réalisations preview ── */}

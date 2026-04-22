@@ -19,8 +19,25 @@ interface Props {
 
 const EASE = [0.16, 1, 0.3, 1] as const
 
+const titleVariants = {
+  hidden: { opacity: 0, y: 52, filter: 'blur(6px)' },
+  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 1.1, ease: EASE } },
+  exit:    { opacity: 0, y: -28, filter: 'blur(4px)', transition: { duration: 0.45, ease: [0.76, 0, 0.24, 1] } },
+}
+
+const bodyVariants = {
+  hidden: { opacity: 0, y: 36, filter: 'blur(4px)' },
+  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 1.1, ease: EASE, delay: 0.32 } },
+  exit:    { opacity: 0, y: -20, transition: { duration: 0.35, ease: [0.76, 0, 0.24, 1] } },
+}
+
+const labelVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.7, ease: EASE } },
+  exit:    { opacity: 0, transition: { duration: 0.25 } },
+}
+
 export default function SavoirFaireScroll({ sections, heroImage, gallery, footerSettings }: Props) {
-  // -1 = section non atteinte, 0..n-1 = sections, n = footer
   const [active, setActive] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -31,7 +48,6 @@ export default function SavoirFaireScroll({ sections, heroImage, gallery, footer
   }
 
   const n = sections.length
-  // +1 panneau footer → total = n+1 panneaux de 100vh
   const totalPanels = n + (footerSettings ? 1 : 0)
 
   useEffect(() => {
@@ -39,9 +55,10 @@ export default function SavoirFaireScroll({ sections, heroImage, gallery, footer
       if (!containerRef.current) return
       const containerTop = containerRef.current.offsetTop
       const relativeScroll = Math.max(0, window.scrollY - containerTop)
+      // 65vh threshold: section changes when 65% of viewport has been scrolled past
       const idx = Math.min(
         totalPanels - 1,
-        Math.max(0, Math.floor(relativeScroll / window.innerHeight))
+        Math.max(0, Math.floor((relativeScroll + window.innerHeight * 0.35) / window.innerHeight))
       )
       setActive(idx)
     }
@@ -91,22 +108,22 @@ export default function SavoirFaireScroll({ sections, heroImage, gallery, footer
                   )}
                 </motion.div>
               ) : (
-                <motion.div
-                  key={active}
-                  initial={{ opacity: 0, y: 56 }}
-                  animate={{ opacity: 1, y: 0, transition: { duration: 1.3, ease: EASE } }}
-                  exit={{ opacity: 0, y: -32, transition: { duration: 0.5, ease: [0.76, 0, 0.24, 1] } }}
-                >
-                  <p className="text-[11px] tracking-[0.2em] uppercase text-muted mb-10">
-                    <span className="text-noir">{String(active + 1).padStart(2, '0')}</span>
-                    <span className="mx-2 opacity-40">—</span>
-                    {String(n).padStart(2, '0')}
-                  </p>
-                  <h2 className="font-power text-4xl xl:text-[3.25rem] text-noir leading-[1.05] mb-8">
+                <motion.div key={active} className="flex flex-col">
+                  <motion.h2
+                    variants={titleVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    className="font-power text-4xl xl:text-[3.25rem] text-noir leading-[1.05] mb-8"
+                  >
                     {sections[active]?.title}
-                  </h2>
+                  </motion.h2>
                   {sections[active]?.body && (
-                    <div
+                    <motion.div
+                      variants={bodyVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
                       className="text-[15px] leading-[1.85] text-noir-soft max-w-[420px] rich-text"
                       dangerouslySetInnerHTML={{ __html: sections[active].body }}
                     />
@@ -115,7 +132,7 @@ export default function SavoirFaireScroll({ sections, heroImage, gallery, footer
               )}
             </AnimatePresence>
 
-            {/* Barre de progression (sections uniquement) */}
+            {/* Barre de progression */}
             {!isFooter && (
               <div className="absolute bottom-10 left-16 xl:left-24 flex gap-2">
                 {sections.map((_, i) => (
@@ -200,11 +217,6 @@ export default function SavoirFaireScroll({ sections, heroImage, gallery, footer
               )}
             </div>
             <div className="px-6 py-12">
-              <p className="text-[11px] tracking-[0.2em] uppercase text-muted mb-4">
-                <span className="text-noir">{String(i + 1).padStart(2, '0')}</span>
-                <span className="mx-2 opacity-40">—</span>
-                {String(n).padStart(2, '0')}
-              </p>
               <h2 className="font-power text-3xl text-noir mb-6">{section.title}</h2>
               {section.body && (
                 <div className="text-[15px] leading-[1.85] text-noir-soft rich-text" dangerouslySetInnerHTML={{ __html: section.body }} />

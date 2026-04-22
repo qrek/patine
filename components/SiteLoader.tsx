@@ -3,21 +3,40 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-export default function SiteLoader() {
+interface Props {
+  logoSrc?: string
+  logoSrcDark?: string
+  logoWidth?: number
+}
+
+export default function SiteLoader({ logoSrc = '', logoSrcDark = '', logoWidth = 120 }: Props) {
   const [done, setDone] = useState(false)
 
   useEffect(() => {
-    // Attend que le document soit chargé + petit délai pour l'effet
-    const go = () => setTimeout(() => setDone(true), 400)
+    const minTime = 1600
+    const start = Date.now()
+    const finish = () => {
+      const elapsed = Date.now() - start
+      setTimeout(() => setDone(true), Math.max(0, minTime - elapsed) + 300)
+    }
     if (document.readyState === 'complete') {
-      go()
+      finish()
     } else {
-      window.addEventListener('load', go, { once: true })
-      // Fallback si "load" ne se déclenche pas
-      const t = setTimeout(() => setDone(true), 2800)
+      window.addEventListener('load', finish, { once: true })
+      const t = setTimeout(() => setDone(true), 3500)
       return () => clearTimeout(t)
     }
   }, [])
+
+  const logoEl = (() => {
+    if (logoSrcDark) return <img src={logoSrcDark} alt="Patine" style={{ width: logoWidth, height: 'auto' }} className="object-contain" />
+    if (logoSrc)     return <img src={logoSrc}     alt="Patine" style={{ width: logoWidth, height: 'auto' }} className="object-contain brightness-0 invert" />
+    return (
+      <span className="font-cormorant text-[#F5F3EF] tracking-[0.45em] text-4xl uppercase">
+        Patine
+      </span>
+    )
+  })()
 
   return (
     <AnimatePresence>
@@ -28,14 +47,13 @@ export default function SiteLoader() {
           exit={{ y: '-100%' }}
           transition={{ duration: 1.0, ease: [0.76, 0, 0.24, 1], delay: 0.1 }}
         >
-          <motion.span
+          <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
-            className="font-cormorant text-[#F5F3EF] tracking-[0.45em] text-4xl uppercase"
           >
-            Patine
-          </motion.span>
+            {logoEl}
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
