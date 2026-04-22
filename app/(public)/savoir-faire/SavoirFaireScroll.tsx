@@ -20,18 +20,26 @@ interface Props {
 const EASE = [0.16, 1, 0.3, 1] as const
 
 const titleVariants = {
-  hidden: { opacity: 0, y: 52, filter: 'blur(6px)' },
-  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 1.1, ease: EASE } },
-  exit:    { opacity: 0, y: -28, filter: 'blur(4px)', transition: { duration: 0.45, ease: [0.76, 0, 0.24, 1] } },
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } },
+  exit:    { opacity: 0, y: -16, transition: { duration: 0.3, ease: [0.76, 0, 0.24, 1] } },
 }
 
 function parseLines(html: string): string[] {
-  return html
-    .replace(/<\/p>/gi, '</p>\u0000')
+  // Découpe par paragraphe puis par phrase (majuscule après . ! ?)
+  const blocks = html
+    .replace(/<\/p>/gi, '\u0000')
     .replace(/<br\s*\/?>/gi, '\u0000')
     .split('\u0000')
-    .map(s => s.trim())
+    .map(s => s.replace(/<p[^>]*>/gi, '').trim())
     .filter(Boolean)
+
+  return blocks.flatMap(block =>
+    block
+      .split(/(?<=[.!?»])\s+(?=[A-ZÀ-Ÿ«"'])/)
+      .map(s => s.trim())
+      .filter(Boolean)
+  )
 }
 
 export default function SavoirFaireScroll({ sections, heroImage, gallery, footerSettings }: Props) {
@@ -121,10 +129,10 @@ export default function SavoirFaireScroll({ sections, heroImage, gallery, footer
                       {parseLines(sections[active].body).map((line, i) => (
                         <motion.div
                           key={`${active}-${i}`}
-                          initial={{ opacity: 0, y: 14, filter: 'blur(3px)' }}
-                          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0 }}
-                          transition={{ duration: 0.75, ease: EASE, delay: 0.42 + i * 0.13 }}
+                          transition={{ duration: 0.35, ease: EASE, delay: 0.3 + i * 0.06 }}
                           dangerouslySetInnerHTML={{ __html: line }}
                         />
                       ))}
