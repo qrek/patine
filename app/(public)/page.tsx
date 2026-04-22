@@ -66,18 +66,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Intro — texte paragraphes ── */}
-      {introHtml && (
-        <section id="intro" className="bg-warm">
-          <div className="max-w-wide mx-auto px-5 lg:px-6 py-20 md:py-32">
-            <div className="grid md:grid-cols-2 gap-10 md:gap-24">
-              <Reveal className="text-[16px] leading-relaxed text-noir-soft rich-text">
-                <div dangerouslySetInnerHTML={{ __html: introHtml }} />
-              </Reveal>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* ── Savoir-faire — texte éditorial ── */}
       {editorialText && (

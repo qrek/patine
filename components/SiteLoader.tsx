@@ -14,32 +14,22 @@ export default function SiteLoader({ logoSrc = '', logoSrcDark = '', logoWidth =
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {
-    const minTime = 1800
-    const start   = Date.now()
+    const ANIM_DURATION = 1800 // durée du fake 0→100 en ms
+    const start = Date.now()
 
-    // Fake smooth progress: rapide au début, ralentit vers 90
-    let current = 0
+    // Compteur qui suit une courbe ease-out sur ANIM_DURATION ms
     const intervalId = window.setInterval(() => {
-      const remaining = 90 - current
-      const step = remaining * 0.12 + Math.random() * 3
-      current = Math.min(current + step, 90)
-      setProgress(current)
-    }, 80)
-
-    const finish = () => {
-      clearInterval(intervalId)
-      setProgress(100)
       const elapsed = Date.now() - start
-      setTimeout(() => setDone(true), Math.max(0, minTime - elapsed) + 200)
-    }
-
-    if (document.readyState === 'complete') {
-      finish()
-    } else {
-      window.addEventListener('load', finish, { once: true })
-      const t = setTimeout(finish, 4000)
-      return () => { clearTimeout(t); clearInterval(intervalId) }
-    }
+      const t = Math.min(elapsed / ANIM_DURATION, 1)
+      // ease-out: avance vite, ralentit à la fin
+      const eased = 1 - Math.pow(1 - t, 2.5)
+      setProgress(eased * 100)
+      if (t >= 1) {
+        clearInterval(intervalId)
+        // Pause à 100 puis disparition
+        setTimeout(() => setDone(true), 400)
+      }
+    }, 30)
 
     return () => clearInterval(intervalId)
   }, [])
@@ -68,11 +58,10 @@ export default function SiteLoader({ logoSrc = '', logoSrcDark = '', logoWidth =
             className="flex flex-col items-center gap-5"
           >
             {logoEl}
-            {/* Pourcentage — directement sous le logo */}
             <motion.span
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.45, duration: 0.4 }}
+              transition={{ delay: 0.35, duration: 0.4 }}
               className="font-power text-[12px] text-[#F5F3EF]/55 tracking-[0.22em] tabular-nums"
             >
               {String(Math.min(100, Math.round(progress))).padStart(3, '0')}
