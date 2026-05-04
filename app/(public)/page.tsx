@@ -36,11 +36,11 @@ export default async function HomePage() {
   const introText    = introHtml.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim()
 
   // Mise en forme citation
-  const introSize   = c.intro.size   ?? 64
-  const introFont   = c.intro.font   ?? 'cormorant'
-  const introItalic = c.intro.italic ?? true
+  const introSize   = c.intro.size   ?? 96
+  const introFont   = c.intro.font   ?? 'power'
+  const introItalic = c.intro.italic ?? false
   const introAlign  = c.intro.align  ?? 'center'
-  const introQuoted = c.intro.quoted ?? true
+  const introQuoted = c.intro.quoted ?? false
 
   const editorialRaw = (c.intro.column2 || '')
     .replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim()

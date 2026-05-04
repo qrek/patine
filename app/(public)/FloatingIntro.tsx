@@ -149,11 +149,11 @@ interface FloatingIntroProps {
 
 export default function FloatingIntro({
   text, photos,
-  size = 64,
-  font = 'cormorant',
-  italic = true,
+  size = 96,
+  font = 'power',
+  italic = false,
   align = 'center',
-  quoted = true,
+  quoted = false,
 }: FloatingIntroProps) {
   const sectionRef = useRef<HTMLDivElement>(null)
 

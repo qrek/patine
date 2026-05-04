@@ -128,11 +128,11 @@ const homeDefault: HomeContent = {
   intro: {
     column1: "Patine est un atelier d'encadrement artisanal fondé à Paris, dédié à la mise en valeur des œuvres d'art, photographies et créations qui vous sont chères.",
     column2: "Chaque encadrement est pensé comme une œuvre en soi — le choix des matières, la précision du geste, l'harmonie des proportions. Un savoir-faire transmis, une attention portée à chaque détail.",
-    size: 64,
-    font: 'cormorant',
-    italic: true,
+    size: 96,
+    font: 'power',
+    italic: false,
     align: 'center',
-    quoted: true,
+    quoted: false,
   },
   paragraphs: [
     { id: 'p1', text: 'Un travail d\'orfèvre, mené à la main, baguette après baguette.' },

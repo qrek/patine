@@ -25,7 +25,7 @@ const DEFAULT: HomeContent = {
   hero: { title: "L'art d'encadrer", subtitle: 'Atelier d\'encadrement', subtitleSize: 14, titleColor: '#F5F3EF', titleSize: 9, titleWeight: 400, image: '' },
   intro: {
     column1: '', column2: '',
-    size: 64, font: 'cormorant', italic: true, align: 'center', quoted: true,
+    size: 96, font: 'power', italic: false, align: 'center', quoted: false,
   },
   paragraphs: [
     { id: 'p1', text: '' },
