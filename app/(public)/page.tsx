@@ -141,20 +141,21 @@ export default async function HomePage() {
               </p>
             </Reveal>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-6 lg:gap-x-10 gap-y-12 items-center">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-8 lg:gap-x-14 gap-y-16 items-center">
               {clients.map((client, i) => (
                 <Reveal key={client.id} delay={(i % 5) * 0.08} y={20}>
-                  <div className="flex items-center justify-center h-20 group">
+                  <div className="flex items-center justify-center h-24 group cursor-default">
                     {client.logo ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={client.logo}
                         alt={client.name || ''}
-                        className="max-h-12 max-w-[140px] w-auto object-contain grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
+                        className="max-h-14 max-w-[150px] w-auto object-contain grayscale opacity-55 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
                       />
                     ) : (
-                      <span className="font-power text-[15px] tracking-[0.04em] text-noir-soft text-center group-hover:text-noir transition-colors duration-300">
+                      <span className="relative font-power text-[11px] tracking-[0.26em] uppercase text-muted group-hover:text-noir transition-colors duration-500 text-center leading-relaxed">
                         {client.name}
+                        <span className="absolute left-1/2 -translate-x-1/2 -bottom-2 w-0 h-px bg-gold group-hover:w-6 transition-all duration-500 ease-out" />
                       </span>
                     )}
                   </div>
