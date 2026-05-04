@@ -9,5 +9,17 @@
     "column1": "Patine est un atelier d'encadrement artisanal fondé à Paris, dédié à la mise en valeur des œuvres d'art, photographies et créations qui vous sont chères.",
     "column2": "Chaque encadrement est pensé comme une œuvre en soi — le choix des matières, la précision du geste, l'harmonie des proportions. Un savoir-faire transmis, une attention portée à chaque détail."
   },
+  "clients": [
+    { "id": "demo-1",  "name": "Galerie Perrotin",     "logo": "" },
+    { "id": "demo-2",  "name": "Hermès",                "logo": "" },
+    { "id": "demo-3",  "name": "Musée d'Orsay",         "logo": "" },
+    { "id": "demo-4",  "name": "Christie's Paris",      "logo": "" },
+    { "id": "demo-5",  "name": "Galerie Lelong",        "logo": "" },
+    { "id": "demo-6",  "name": "Centre Pompidou",       "logo": "" },
+    { "id": "demo-7",  "name": "Dior",                  "logo": "" },
+    { "id": "demo-8",  "name": "Sotheby's",             "logo": "" },
+    { "id": "demo-9",  "name": "Fondation Cartier",     "logo": "" },
+    { "id": "demo-10", "name": "Maison Chanel",         "logo": "" }
+  ],
   "instagramFeed": []
 }
