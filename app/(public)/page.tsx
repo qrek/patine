@@ -153,7 +153,7 @@ export default async function HomePage() {
                         className="max-h-12 max-w-[140px] w-auto object-contain grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
                       />
                     ) : (
-                      <span className="font-cormorant italic text-lg text-noir-soft text-center group-hover:text-noir transition-colors duration-300">
+                      <span className="font-power text-[15px] tracking-[0.04em] text-noir-soft text-center group-hover:text-noir transition-colors duration-300">
                         {client.name}
                       </span>
                     )}
