@@ -146,14 +146,14 @@ export default async function HomePage() {
         <section className="bg-cream border-t border-border">
           <div className="max-w-[1440px] mx-auto px-5 lg:px-12 py-20 md:py-28">
             <Reveal>
-              <p className="text-2xs tracking-caps uppercase text-muted text-center mb-14">
+              <p className="text-2xs tracking-caps uppercase text-muted mb-14">
                 Ils nous font confiance
               </p>
             </Reveal>
 
             {/* Zone 1 : clients avec logo (mis en avant) */}
             {logoClients.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-8 lg:gap-x-14 gap-y-16 items-center">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-10 lg:gap-x-16 gap-y-20 items-center">
                 {logoClients.map((client, i) => {
                   const href = normalizeUrl(client.url)
                   const inner = (
@@ -161,23 +161,23 @@ export default async function HomePage() {
                     <img
                       src={client.logo}
                       alt={client.name || ''}
-                      className="max-h-14 max-w-[150px] w-auto object-contain grayscale opacity-55 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
+                      className="max-h-24 lg:max-h-28 max-w-[240px] lg:max-w-[280px] w-auto object-contain grayscale opacity-65 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
                     />
                   )
                   return (
-                    <Reveal key={client.id} delay={(i % 5) * 0.08} y={20}>
+                    <Reveal key={client.id} delay={(i % 4) * 0.08} y={20}>
                       {href ? (
                         <a
                           href={href}
                           target="_blank"
                           rel="noopener noreferrer"
                           aria-label={client.name || 'Site du client'}
-                          className="flex items-center justify-center h-24 group"
+                          className="flex items-center justify-center h-36 lg:h-44 group"
                         >
                           {inner}
                         </a>
                       ) : (
-                        <div className="flex items-center justify-center h-24 group cursor-default">
+                        <div className="flex items-center justify-center h-36 lg:h-44 group cursor-default">
                           {inner}
                         </div>
                       )}
@@ -190,7 +190,7 @@ export default async function HomePage() {
             {/* Zone 2 : clients sans logo, en liste fluide */}
             {textClients.length > 0 && (
               <Reveal delay={0.2}>
-                <ul className={`flex flex-wrap items-center justify-center gap-x-6 lg:gap-x-8 gap-y-4 ${logoClients.length > 0 ? 'mt-20 pt-12 border-t border-border' : ''}`}>
+                <ul className={`flex flex-wrap items-center justify-center gap-x-6 lg:gap-x-8 gap-y-4 ${logoClients.length > 0 ? 'mt-16' : ''}`}>
                   {textClients.map((client, i) => {
                     const href = normalizeUrl(client.url)
                     const label = (
