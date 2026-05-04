@@ -5,7 +5,7 @@ import ImageUpload from '@/components/ImageUpload'
 import RichTextEditor from '@/components/RichTextEditor'
 
 interface InstagramPhoto { id: string; src: string; caption?: string }
-interface Client { id: string; name: string; logo: string }
+interface Client { id: string; name: string; logo: string; url?: string }
 interface HomeContent {
   hero: { title: string; subtitle: string; subtitleSize: number; titleColor: string; titleSize: number; titleWeight: number; image: string }
   intro: {
@@ -74,10 +74,10 @@ export default function AdminAccueil() {
   function addClient() {
     setContent((c) => ({
       ...c,
-      clients: [...c.clients, { id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, name: '', logo: '' }],
+      clients: [...c.clients, { id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, name: '', logo: '', url: '' }],
     }))
   }
-  function updateClient(id: string, field: 'name' | 'logo', value: string) {
+  function updateClient(id: string, field: 'name' | 'logo' | 'url', value: string) {
     setContent((c) => ({
       ...c,
       clients: c.clients.map((cl) => cl.id === id ? { ...cl, [field]: value } : cl),
@@ -362,7 +362,7 @@ export default function AdminAccueil() {
                     />
                   </div>
 
-                  {/* Nom + actions */}
+                  {/* Nom + URL + actions */}
                   <div className="flex-1 space-y-2">
                     <input
                       type="text"
@@ -371,8 +371,15 @@ export default function AdminAccueil() {
                       onChange={(e) => updateClient(client.id, 'name', e.target.value)}
                       className="w-full border border-gray-200 rounded px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-gray-400"
                     />
+                    <input
+                      type="url"
+                      placeholder="Site web (https://…) — optionnel"
+                      value={client.url ?? ''}
+                      onChange={(e) => updateClient(client.id, 'url', e.target.value)}
+                      className="w-full border border-gray-200 rounded px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-gray-400"
+                    />
                     <p className="text-[10px] text-gray-300">
-                      Le logo s'affiche en niveaux de gris ; au survol, il revient en couleur.
+                      Avec logo : affiché dans la grille du haut. Sans logo : listé en dessous. Cliquable si une URL est fournie.
                     </p>
                   </div>
 

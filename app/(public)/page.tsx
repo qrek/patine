@@ -48,8 +48,18 @@ export default async function HomePage() {
     ? editorialRaw.slice(0, 220).trimEnd()
     : editorialRaw
 
-  // Clients ("Ils nous font confiance")
-  const clients = (c.clients ?? []).filter(cl => cl?.name?.trim() || cl?.logo)
+  // Clients ("Ils nous font confiance") — séparés en avec/sans logo
+  const allClients     = (c.clients ?? []).filter(cl => cl?.name?.trim() || cl?.logo)
+  const logoClients    = allClients.filter(cl => cl.logo)
+  const textClients    = allClients.filter(cl => !cl.logo)
+  const hasAnyClient   = allClients.length > 0
+
+  // Normalise une URL : ajoute https:// si pas de protocole
+  const normalizeUrl = (url?: string) => {
+    if (!url?.trim()) return undefined
+    const trimmed = url.trim()
+    return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
+  }
 
   return (
     <>
@@ -132,7 +142,7 @@ export default async function HomePage() {
       )}
 
       {/* ── Ils nous font confiance ── */}
-      {clients.length > 0 && (
+      {hasAnyClient && (
         <section className="bg-cream border-t border-border">
           <div className="max-w-[1440px] mx-auto px-5 lg:px-12 py-20 md:py-28">
             <Reveal>
@@ -141,27 +151,79 @@ export default async function HomePage() {
               </p>
             </Reveal>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-8 lg:gap-x-14 gap-y-16 items-center">
-              {clients.map((client, i) => (
-                <Reveal key={client.id} delay={(i % 5) * 0.08} y={20}>
-                  <div className="flex items-center justify-center h-24 group cursor-default">
-                    {client.logo ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={client.logo}
-                        alt={client.name || ''}
-                        className="max-h-14 max-w-[150px] w-auto object-contain grayscale opacity-55 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
-                      />
-                    ) : (
-                      <span className="relative font-power text-[11px] tracking-[0.26em] uppercase text-muted group-hover:text-noir transition-colors duration-500 text-center leading-relaxed">
+            {/* Zone 1 : clients avec logo (mis en avant) */}
+            {logoClients.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-8 lg:gap-x-14 gap-y-16 items-center">
+                {logoClients.map((client, i) => {
+                  const href = normalizeUrl(client.url)
+                  const inner = (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={client.logo}
+                      alt={client.name || ''}
+                      className="max-h-14 max-w-[150px] w-auto object-contain grayscale opacity-55 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
+                    />
+                  )
+                  return (
+                    <Reveal key={client.id} delay={(i % 5) * 0.08} y={20}>
+                      {href ? (
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={client.name || 'Site du client'}
+                          className="flex items-center justify-center h-24 group"
+                        >
+                          {inner}
+                        </a>
+                      ) : (
+                        <div className="flex items-center justify-center h-24 group cursor-default">
+                          {inner}
+                        </div>
+                      )}
+                    </Reveal>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* Zone 2 : clients sans logo, en liste fluide */}
+            {textClients.length > 0 && (
+              <Reveal delay={0.2}>
+                <ul className={`flex flex-wrap items-center justify-center gap-x-6 lg:gap-x-8 gap-y-4 ${logoClients.length > 0 ? 'mt-20 pt-12 border-t border-border' : ''}`}>
+                  {textClients.map((client, i) => {
+                    const href = normalizeUrl(client.url)
+                    const label = (
+                      <span className="relative font-power text-[11px] tracking-[0.26em] uppercase text-muted group-hover:text-noir transition-colors duration-500">
                         {client.name}
-                        <span className="absolute left-1/2 -translate-x-1/2 -bottom-2 w-0 h-px bg-gold group-hover:w-6 transition-all duration-500 ease-out" />
+                        <span className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 w-0 h-px bg-gold group-hover:w-5 transition-all duration-500 ease-out" />
                       </span>
-                    )}
-                  </div>
-                </Reveal>
-              ))}
-            </div>
+                    )
+                    return (
+                      <li key={client.id} className="flex items-center gap-x-6 lg:gap-x-8">
+                        {i > 0 && (
+                          <span aria-hidden className="text-muted/40 text-[10px] -ml-3 lg:-ml-4">•</span>
+                        )}
+                        {href ? (
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group inline-block py-1"
+                          >
+                            {label}
+                          </a>
+                        ) : (
+                          <span className="group inline-block py-1 cursor-default">
+                            {label}
+                          </span>
+                        )}
+                      </li>
+                    )
+                  })}
+                </ul>
+              </Reveal>
+            )}
 
             {allPhotos.length > 0 && (
               <Reveal delay={0.4} className="mt-16 pt-10 border-t border-border text-center">
