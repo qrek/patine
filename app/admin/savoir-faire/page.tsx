@@ -4,7 +4,15 @@ import { useState, useEffect, FormEvent } from 'react'
 import ImageUpload from '@/components/ImageUpload'
 import RichTextEditor from '@/components/RichTextEditor'
 
-interface Section { id: string; title: string; body: string; image: string }
+interface Section {
+  id: string
+  title: string
+  body: string
+  image: string
+  textSize?: number
+  textAlign?: 'left' | 'justify' | 'center'
+  textWidth?: 'default' | 'wide'
+}
 interface SavoirFaireData {
   pageTitle: string
   heroImage: string
@@ -12,14 +20,16 @@ interface SavoirFaireData {
   sections: Section[]
 }
 
+const SECTION_DEFAULTS = { textSize: 16, textAlign: 'left' as const, textWidth: 'default' as const }
+
 const DEFAULT: SavoirFaireData = {
   pageTitle: "L'art de l'encadrement",
   heroImage: '',
   gallery: ['', '', '', ''],
   sections: [
-    { id: 'matieres',  title: 'Le Choix des matières',    body: '', image: '' },
-    { id: 'processus', title: 'Le Processus',              body: '', image: '' },
-    { id: 'clientele', title: "Une clientèle d'exception", body: '', image: '' },
+    { id: 'matieres',  title: 'Le Choix des matières',    body: '', image: '', ...SECTION_DEFAULTS },
+    { id: 'processus', title: 'Le Processus',              body: '', image: '', ...SECTION_DEFAULTS },
+    { id: 'clientele', title: "Une clientèle d'exception", body: '', image: '', ...SECTION_DEFAULTS },
   ],
 }
 
@@ -40,7 +50,9 @@ export default function AdminSavoirFaire() {
         pageTitle: d.pageTitle ?? DEFAULT.pageTitle,
         heroImage: d.heroImage ?? '',
         gallery:   d.gallery?.length === 4 ? d.gallery : ['', '', '', ''],
-        sections:  d.sections?.length > 0 ? d.sections : DEFAULT.sections,
+        sections:  d.sections?.length > 0
+          ? d.sections.map((s: Section) => ({ ...SECTION_DEFAULTS, ...s }))
+          : DEFAULT.sections,
       }))
       .catch(() => {})
   }, [])
@@ -48,7 +60,7 @@ export default function AdminSavoirFaire() {
   const setHero    = (url: string) => setData((d) => ({ ...d, heroImage: url }))
   const setGallery = (i: number, url: string) =>
     setData((d) => { const g = [...d.gallery]; g[i] = url; return { ...d, gallery: g } })
-  const updateSection = (id: string, field: keyof Section, value: string) =>
+  const updateSection = <K extends keyof Section>(id: string, field: K, value: Section[K]) =>
     setData((d) => ({ ...d, sections: d.sections.map((s) => s.id === id ? { ...s, [field]: value } : s) }))
 
   async function handleSubmit(e: FormEvent) {
@@ -130,6 +142,50 @@ export default function AdminSavoirFaire() {
                 destination={`savoir-faire-section-${section.id}`}
               />
               <p className="text-[10px] text-gray-300 mt-1">Si vide, utilise la grande image ou la galerie.</p>
+            </div>
+
+            {/* Mise en forme du texte */}
+            <div className="pt-3 border-t border-gray-100 space-y-3">
+              <p className="text-[11px] font-medium text-gray-500">Mise en forme du texte</p>
+
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-[11px] text-gray-400">Taille</label>
+                  <span className="text-[11px] font-medium text-gray-600">{section.textSize ?? 16}px</span>
+                </div>
+                <input
+                  type="range" min={13} max={28} step={1}
+                  value={section.textSize ?? 16}
+                  onChange={(e) => updateSection(section.id, 'textSize', Number(e.target.value))}
+                  className="w-full accent-gray-900"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] text-gray-400 mb-1.5">Alignement</label>
+                  <select
+                    value={section.textAlign ?? 'left'}
+                    onChange={(e) => updateSection(section.id, 'textAlign', e.target.value as Section['textAlign'])}
+                    className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-gray-400"
+                  >
+                    <option value="left">Gauche</option>
+                    <option value="justify">Justifié</option>
+                    <option value="center">Centré</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[11px] text-gray-400 mb-1.5">Largeur de colonne</label>
+                  <select
+                    value={section.textWidth ?? 'default'}
+                    onChange={(e) => updateSection(section.id, 'textWidth', e.target.value as Section['textWidth'])}
+                    className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-gray-400"
+                  >
+                    <option value="default">Standard</option>
+                    <option value="wide">Large</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </section>
         ))}

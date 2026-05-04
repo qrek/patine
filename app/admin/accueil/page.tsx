@@ -5,15 +5,33 @@ import ImageUpload from '@/components/ImageUpload'
 import RichTextEditor from '@/components/RichTextEditor'
 
 interface InstagramPhoto { id: string; src: string; caption?: string }
+interface Paragraph { id: string; text: string }
 interface HomeContent {
   hero: { title: string; subtitle: string; subtitleSize: number; titleColor: string; titleSize: number; titleWeight: number; image: string }
-  intro: { column1: string; column2: string }
+  intro: {
+    column1: string
+    column2: string
+    size: number
+    font: 'power' | 'cormorant' | 'instrument'
+    italic: boolean
+    align: 'left' | 'center'
+    quoted: boolean
+  }
+  paragraphs: Paragraph[]
   instagramFeed: InstagramPhoto[]
 }
 
 const DEFAULT: HomeContent = {
   hero: { title: "L'art d'encadrer", subtitle: 'Atelier d\'encadrement', subtitleSize: 14, titleColor: '#F5F3EF', titleSize: 9, titleWeight: 400, image: '' },
-  intro: { column1: '', column2: '' },
+  intro: {
+    column1: '', column2: '',
+    size: 64, font: 'cormorant', italic: true, align: 'center', quoted: true,
+  },
+  paragraphs: [
+    { id: 'p1', text: '' },
+    { id: 'p2', text: '' },
+    { id: 'p3', text: '' },
+  ],
   instagramFeed: [],
 }
 
@@ -25,11 +43,17 @@ export default function AdminAccueil() {
   useEffect(() => {
     fetch('/api/admin/get?section=home')
       .then((r) => r.json())
-      .then((d) => setContent({
-        hero: { ...DEFAULT.hero, ...d.hero, titleColor: d.hero?.titleColor ?? '#F5F3EF', titleSize: d.hero?.titleSize ?? 9, titleWeight: d.hero?.titleWeight ?? 400 },
-        intro: { ...DEFAULT.intro, ...d.intro },
-        instagramFeed: d.instagramFeed ?? [],
-      }))
+      .then((d) => {
+        const paras: Paragraph[] = Array.isArray(d.paragraphs) && d.paragraphs.length === 3
+          ? d.paragraphs
+          : DEFAULT.paragraphs
+        setContent({
+          hero: { ...DEFAULT.hero, ...d.hero, titleColor: d.hero?.titleColor ?? '#F5F3EF', titleSize: d.hero?.titleSize ?? 9, titleWeight: d.hero?.titleWeight ?? 400 },
+          intro: { ...DEFAULT.intro, ...d.intro },
+          paragraphs: paras,
+          instagramFeed: d.instagramFeed ?? [],
+        })
+      })
       .catch(() => {})
   }, [])
 
@@ -49,6 +73,15 @@ export default function AdminAccueil() {
 
   const setHero = (field: keyof HomeContent['hero'], value: string | number) =>
     setContent((c) => ({ ...c, hero: { ...c.hero, [field]: value } }))
+
+  const setIntro = <K extends keyof HomeContent['intro']>(field: K, value: HomeContent['intro'][K]) =>
+    setContent((c) => ({ ...c, intro: { ...c.intro, [field]: value } }))
+
+  const setParagraph = (i: number, text: string) =>
+    setContent((c) => ({
+      ...c,
+      paragraphs: c.paragraphs.map((p, idx) => idx === i ? { ...p, text } : p),
+    }))
 
   // Instagram feed
   async function addInstaPhoto(e: React.ChangeEvent<HTMLInputElement>) {
@@ -207,23 +240,110 @@ export default function AdminAccueil() {
           </div>
         </section>
 
-        {/* ── Intro ── */}
+        {/* ── Citation (intro flottante) ── */}
         <section className="bg-white rounded-lg border border-gray-200 p-6 space-y-5">
-          <h2 className="text-[13px] font-medium text-gray-700 border-b border-gray-100 pb-3">Section Introduction</h2>
+          <h2 className="text-[13px] font-medium text-gray-700 border-b border-gray-100 pb-3">Citation (intro flottante)</h2>
+          <p className="text-[12px] text-gray-400 -mt-2">Le grand texte au centre de l'intro, accompagné des photos flottantes.</p>
+
           <div>
-            <label className="block text-[11px] text-gray-400 mb-2">Colonne gauche</label>
+            <label className="block text-[11px] text-gray-400 mb-2">Texte (colonne gauche)</label>
             <RichTextEditor
               value={content.intro.column1}
               onChange={(html) => setContent((c) => ({ ...c, intro: { ...c.intro, column1: html } }))}
             />
           </div>
+
+          {/* Mise en forme citation */}
+          <div className="grid grid-cols-2 gap-4 pt-2">
+            <div>
+              <label className="block text-[11px] text-gray-400 mb-1.5">Police</label>
+              <select
+                value={content.intro.font}
+                onChange={(e) => setIntro('font', e.target.value as 'power' | 'cormorant' | 'instrument')}
+                className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-gray-400"
+              >
+                <option value="cormorant">Cormorant (serif — citation)</option>
+                <option value="power">Power Grotesk (sans — éditorial)</option>
+                <option value="instrument">Instrument Sans</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-[11px] text-gray-400 mb-1.5">Alignement</label>
+              <select
+                value={content.intro.align}
+                onChange={(e) => setIntro('align', e.target.value as 'left' | 'center')}
+                className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-gray-400"
+              >
+                <option value="center">Centré</option>
+                <option value="left">À gauche</option>
+              </select>
+            </div>
+          </div>
+
           <div>
-            <label className="block text-[11px] text-gray-400 mb-2">Colonne droite</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[11px] text-gray-400">Taille du texte</label>
+              <span className="text-[11px] font-medium text-gray-600">{content.intro.size}px</span>
+            </div>
+            <input type="range" min={28} max={120} step={1}
+              value={content.intro.size}
+              onChange={(e) => setIntro('size', Number(e.target.value))}
+              className="w-full accent-gray-900"
+            />
+            <div className="flex justify-between text-[10px] text-gray-300 mt-0.5">
+              <span>Petit</span><span>Grand</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-6 pt-1">
+            <label className="inline-flex items-center gap-2 text-[12px] text-gray-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={content.intro.italic}
+                onChange={(e) => setIntro('italic', e.target.checked)}
+                className="accent-gray-900"
+              />
+              Italique
+            </label>
+            <label className="inline-flex items-center gap-2 text-[12px] text-gray-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={content.intro.quoted}
+                onChange={(e) => setIntro('quoted', e.target.checked)}
+                className="accent-gray-900"
+              />
+              Guillemets « »
+            </label>
+          </div>
+
+          <div className="pt-3 border-t border-gray-100">
+            <label className="block text-[11px] text-gray-400 mb-2">
+              Texte éditorial (colonne droite — affiché plus haut sur la page, en grand serif)
+            </label>
             <RichTextEditor
               value={content.intro.column2}
               onChange={(html) => setContent((c) => ({ ...c, intro: { ...c.intro, column2: html } }))}
             />
           </div>
+        </section>
+
+        {/* ── 3 paragraphes (sous l'intro) ── */}
+        <section className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
+          <h2 className="text-[13px] font-medium text-gray-700 border-b border-gray-100 pb-3">Trois paragraphes courts</h2>
+          <p className="text-[12px] text-gray-400 -mt-2">Affichés en triptyque (remplace le bandeau des 3 photos). Gardez chaque paragraphe court (1–2 lignes).</p>
+          {content.paragraphs.map((p, i) => (
+            <div key={p.id}>
+              <label className="block text-[11px] text-gray-400 mb-1.5">Paragraphe {i + 1}</label>
+              <textarea
+                value={p.text}
+                onChange={(e) => setParagraph(i, e.target.value)}
+                rows={2}
+                className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-gray-400 resize-none leading-relaxed"
+                placeholder="Une phrase courte et stylée…"
+              />
+            </div>
+          ))}
         </section>
 
         {/* ── Instagram feed ── */}

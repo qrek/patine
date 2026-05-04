@@ -23,7 +23,21 @@ export interface InstagramPhoto {
 
 export interface HomeContent {
   hero: { title: string; subtitle: string; subtitleSize?: number; titleColor?: string; titleSize?: number; titleWeight?: number; image: string }
-  intro: { column1: string; column2: string }
+  intro: {
+    column1: string
+    column2: string
+    /** Taille de la citation (px desktop) */
+    size?: number
+    /** Famille de police pour la citation */
+    font?: 'power' | 'cormorant' | 'instrument'
+    /** Italique */
+    italic?: boolean
+    /** Alignement */
+    align?: 'left' | 'center'
+    /** Encadrer par « » */
+    quoted?: boolean
+  }
+  paragraphs?: { id: string; text: string }[]
   instagramFeed?: InstagramPhoto[]
 }
 
@@ -32,6 +46,12 @@ export interface SavoirFaireSection {
   title: string
   body: string
   image: string
+  /** Taille du texte (px) — défaut 15 */
+  textSize?: number
+  /** Alignement du texte */
+  textAlign?: 'left' | 'justify' | 'center'
+  /** Largeur de la colonne texte */
+  textWidth?: 'default' | 'wide'
 }
 
 export interface SavoirFaireContent {
@@ -108,7 +128,17 @@ const homeDefault: HomeContent = {
   intro: {
     column1: "Patine est un atelier d'encadrement artisanal fondé à Paris, dédié à la mise en valeur des œuvres d'art, photographies et créations qui vous sont chères.",
     column2: "Chaque encadrement est pensé comme une œuvre en soi — le choix des matières, la précision du geste, l'harmonie des proportions. Un savoir-faire transmis, une attention portée à chaque détail.",
+    size: 64,
+    font: 'cormorant',
+    italic: true,
+    align: 'center',
+    quoted: true,
   },
+  paragraphs: [
+    { id: 'p1', text: 'Un travail d\'orfèvre, mené à la main, baguette après baguette.' },
+    { id: 'p2', text: 'Des matières nobles, choisies pour leur grain, leur tenue, leur lumière.' },
+    { id: 'p3', text: 'Une attention portée à chaque détail, du premier coup d\'œil à la pose finale.' },
+  ],
 }
 
 const sfDefault: SavoirFaireContent = {

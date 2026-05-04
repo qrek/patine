@@ -9,27 +9,46 @@ import ScrollHint from '@/components/ScrollHint'
 
 export const dynamic = 'force-dynamic'
 
+// Mélange Fisher–Yates
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
 export default async function HomePage() {
   const [c, sf, real] = await Promise.all([getHome(), getSavoirFaire(), getRealisations()])
-  const allPhotos   = [...(real.photos ?? [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-  const heroPhotos  = allPhotos.slice(0, 3)
-  const floatPhotos = allPhotos.slice(0, 4)
+  const allPhotos   = real.photos ?? []
+  // Photos flottantes : tirage aléatoire à chaque chargement
+  const floatPhotos = shuffle(allPhotos).slice(0, 4)
 
   const subtitleSize  = c.hero.subtitleSize ?? 14
   const titleColor    = c.hero.titleColor   || '#F5F3EF'
   const titleSize     = c.hero.titleSize    ?? 9
   const titleWeight   = c.hero.titleWeight  ?? 400
 
-  const feedPhotos = [...(c.instagramFeed ?? [])].sort(() => Math.random() - 0.5)
+  const feedPhotos = shuffle(c.instagramFeed ?? [])
 
   const introHtml    = c.intro.column1 || ''
   const introText    = introHtml.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim()
+
+  // Mise en forme citation
+  const introSize   = c.intro.size   ?? 64
+  const introFont   = c.intro.font   ?? 'cormorant'
+  const introItalic = c.intro.italic ?? true
+  const introAlign  = c.intro.align  ?? 'center'
+  const introQuoted = c.intro.quoted ?? true
 
   const editorialRaw = (c.intro.column2 || '')
     .replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim()
   const editorialText = editorialRaw.length > 220
     ? editorialRaw.slice(0, 220).trimEnd()
     : editorialRaw
+
+  const paragraphs = (c.paragraphs ?? []).filter(p => p?.text?.trim())
 
   return (
     <>
@@ -100,30 +119,43 @@ export default async function HomePage() {
 
       {/* ── Intro flottante ── */}
       {introText && (
-        <FloatingIntro text={introText} photos={floatPhotos} />
+        <FloatingIntro
+          text={introText}
+          photos={floatPhotos}
+          size={introSize}
+          font={introFont}
+          italic={introItalic}
+          align={introAlign}
+          quoted={introQuoted}
+        />
       )}
 
-      {/* ── Réalisations preview ── */}
-      {heroPhotos.length > 0 && (
-        <section className="border-t border-border">
-          <div className="grid grid-cols-1 sm:grid-cols-3">
-            {heroPhotos.map((photo, i) => (
-              <Reveal key={photo.id} delay={i * 0.12} className="relative aspect-[4/5] overflow-hidden bg-[#D8D6D1] group">
-                <Image
-                  src={photo.src}
-                  alt={photo.title || ''}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                  sizes="(max-width:768px) 100vw, 33vw"
-                />
+      {/* ── 3 paragraphes éditoriaux ── */}
+      {paragraphs.length > 0 && (
+        <section className="bg-cream border-t border-border">
+          <div className="max-w-[1440px] mx-auto px-5 lg:px-12 py-24 md:py-32">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-14 gap-y-14">
+              {paragraphs.slice(0, 3).map((p, i) => (
+                <Reveal key={p.id} delay={i * 0.18} y={32}>
+                  <div className="flex flex-col items-start">
+                    <span className="font-power text-[11px] tracking-[0.32em] uppercase text-muted mb-6">
+                      — {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <p className="font-cormorant italic text-[clamp(1.35rem,1.6vw,1.75rem)] text-noir leading-[1.45] tracking-[-0.005em] max-w-[34ch]">
+                      {p.text}
+                    </p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+            {allPhotos.length > 0 && (
+              <Reveal delay={0.4} className="mt-16 pt-10 border-t border-border">
+                <Link href="/realisations" className="text-2xs tracking-caps uppercase text-noir border-b border-noir pb-0.5 hover:text-muted hover:border-muted transition-colors duration-200">
+                  Voir toutes les réalisations ↗
+                </Link>
               </Reveal>
-            ))}
+            )}
           </div>
-          <Reveal className="px-5 lg:px-6 py-8 border-t border-border">
-            <Link href="/realisations" className="text-2xs tracking-caps uppercase text-noir border-b border-noir pb-0.5 hover:text-muted hover:border-muted transition-colors duration-200">
-              Voir toutes les réalisations ↗
-            </Link>
-          </Reveal>
         </section>
       )}
 

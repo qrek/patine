@@ -74,24 +74,48 @@ function FloatingPhoto({
   )
 }
 
-function WordReveal({ text, mouseX, mouseY }: {
+type FontKey = 'power' | 'cormorant' | 'instrument'
+
+const FONT_CSS: Record<FontKey, string> = {
+  power:      "var(--font-power)",
+  cormorant:  "var(--font-cormorant), Georgia, serif",
+  instrument: "var(--font-instrument), system-ui, sans-serif",
+}
+
+function WordReveal({
+  text, mouseX, mouseY, size, font, italic, align, quoted,
+}: {
   text: string
   mouseX: SpringValue
   mouseY: SpringValue
+  size: number
+  font: FontKey
+  italic: boolean
+  align: 'left' | 'center'
+  quoted: boolean
 }) {
-  const words    = text.split(' ')
+  const innerWords = text.split(' ').filter(Boolean)
+  const words = quoted ? ['«', ...innerWords, '»'] : innerWords
   const rotateX  = useTransform(mouseY, (v: number) => v * -6)
   const rotateY  = useTransform(mouseX, (v: number) => v * 6)
+
+  // Taille fluide : ~ 0.42× la valeur sur mobile → 1× au max
+  const fluidSize = `clamp(${Math.round(size * 0.42)}px, ${(size * 0.85 / 16).toFixed(2)}vw + ${(size * 0.5 / 16).toFixed(2)}rem, ${size}px)`
 
   return (
     <motion.div
       style={{ rotateX, rotateY, transformPerspective: 800 }}
-      className="relative z-10 px-8 md:px-24 lg:px-48 xl:px-52 text-center max-w-[1200px] mx-auto"
+      className={`relative z-10 px-8 md:px-24 lg:px-48 xl:px-52 max-w-[1200px] mx-auto ${align === 'center' ? 'text-center' : 'text-left'}`}
     >
       <motion.p
-        className="font-power text-[clamp(2rem,4.8vw,6.5rem)] leading-[1.08] tracking-[-0.01em] text-noir"
-        whileHover={{ color: '#2B4BD5' }}
-        transition={{ color: { duration: 0.6 } }}
+        style={{
+          fontFamily: FONT_CSS[font],
+          fontSize: fluidSize,
+          fontStyle: italic ? 'italic' : 'normal',
+          lineHeight: font === 'cormorant' ? 1.12 : 1.08,
+          letterSpacing: font === 'cormorant' ? '-0.005em' : '-0.01em',
+          color: 'var(--noir)',
+        }}
       >
         {words.map((word, i) => (
           <motion.span
@@ -113,7 +137,24 @@ function WordReveal({ text, mouseX, mouseY }: {
   )
 }
 
-export default function FloatingIntro({ text, photos }: { text: string; photos: Photo[] }) {
+interface FloatingIntroProps {
+  text: string
+  photos: Photo[]
+  size?: number
+  font?: FontKey
+  italic?: boolean
+  align?: 'left' | 'center'
+  quoted?: boolean
+}
+
+export default function FloatingIntro({
+  text, photos,
+  size = 64,
+  font = 'cormorant',
+  italic = true,
+  align = 'center',
+  quoted = true,
+}: FloatingIntroProps) {
   const sectionRef = useRef<HTMLDivElement>(null)
 
   const { scrollYProgress } = useScroll({
@@ -161,7 +202,16 @@ export default function FloatingIntro({ text, photos }: { text: string; photos: 
         )}
       </div>
 
-      <WordReveal text={text} mouseX={mouseX} mouseY={mouseY} />
+      <WordReveal
+        text={text}
+        mouseX={mouseX}
+        mouseY={mouseY}
+        size={size}
+        font={font}
+        italic={italic}
+        align={align}
+        quoted={quoted}
+      />
     </div>
   )
 }
