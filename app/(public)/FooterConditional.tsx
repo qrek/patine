@@ -1,6 +1,5 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
 import Footer from '@/components/Footer'
 
 interface FooterProps {
@@ -16,8 +15,5 @@ interface FooterProps {
 }
 
 export default function FooterConditional(props: FooterProps) {
-  const pathname = usePathname()
-  // Sur /savoir-faire le footer est intégré dans le scroll sticky
-  if (pathname === '/savoir-faire') return null
   return <Footer {...props} />
 }
