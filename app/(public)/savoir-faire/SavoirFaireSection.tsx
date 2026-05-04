@@ -59,9 +59,6 @@ export default function SavoirFaireSection({
         className={`flex flex-col justify-center px-8 lg:px-14 xl:px-16 py-14 lg:py-20 ${reversed ? 'lg:order-1' : 'lg:order-2'}`}
       >
         <div className={`${widthClass} ${alignClass}`}>
-          {/* Ligne décorative */}
-          <div className={`w-8 h-px bg-gold mb-8 ${textAlign === 'center' ? 'mx-auto' : ''}`} />
-
           <h2 className="font-power text-3xl xl:text-[2.6rem] text-noir leading-[1.1] mb-7">
             {title}
           </h2>
