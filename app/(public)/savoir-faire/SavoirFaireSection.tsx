@@ -27,7 +27,7 @@ export default function SavoirFaireSection({
     : 'text-left'
 
   return (
-    <section className={`grid grid-cols-1 lg:grid-cols-2 border-t border-border ${warm ? 'bg-warm' : 'bg-cream'}`}>
+    <section className={`grid grid-cols-1 lg:grid-cols-2 lg:min-h-[88vh] border-t border-border ${warm ? 'bg-warm' : 'bg-cream'}`}>
 
       {/* Image */}
       <motion.div
