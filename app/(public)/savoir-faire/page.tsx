@@ -23,8 +23,6 @@ export default async function SavoirFairePage() {
             title={section.title}
             body={section.body}
             imageSrc={imageSrc}
-            index={i}
-            total={sections.length}
             reversed={i % 2 !== 0}
             warm={i % 2 !== 0}
             textSize={section.textSize}

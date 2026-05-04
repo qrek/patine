@@ -7,8 +7,6 @@ interface Props {
   title: string
   body: string
   imageSrc: string
-  index: number
-  total: number
   reversed: boolean
   warm: boolean
   textSize?: number
@@ -19,7 +17,7 @@ interface Props {
 const EASE = [0.16, 1, 0.3, 1] as const
 
 export default function SavoirFaireSection({
-  title, body, imageSrc, index, total, reversed, warm,
+  title, body, imageSrc, reversed, warm,
   textSize = 16, textAlign = 'left', textWidth = 'default',
 }: Props) {
   const widthClass = textWidth === 'wide' ? 'max-w-[680px]' : 'max-w-[460px]'
@@ -61,14 +59,8 @@ export default function SavoirFaireSection({
         className={`flex flex-col justify-center px-8 lg:px-14 xl:px-16 py-14 lg:py-20 ${reversed ? 'lg:order-1' : 'lg:order-2'}`}
       >
         <div className={`${widthClass} ${alignClass}`}>
-          <p className="text-[11px] tracking-[0.22em] uppercase text-muted mb-8">
-            <span className="text-noir">{String(index + 1).padStart(2, '0')}</span>
-            <span className="mx-2 opacity-40">—</span>
-            {String(total).padStart(2, '0')}
-          </p>
-
           {/* Ligne décorative */}
-          <div className="w-8 h-px bg-gold mb-8" />
+          <div className={`w-8 h-px bg-gold mb-8 ${textAlign === 'center' ? 'mx-auto' : ''}`} />
 
           <h2 className="font-power text-3xl xl:text-[2.6rem] text-noir leading-[1.1] mb-7">
             {title}
