@@ -144,7 +144,7 @@ export default async function HomePage() {
       {/* ── Ils nous font confiance ── */}
       {hasAnyClient && (
         <section className="bg-cream border-t border-border">
-          <div className="max-w-[1440px] mx-auto px-5 lg:px-12 py-20 md:py-28">
+          <div className="w-full px-5 md:px-10 lg:px-16 xl:px-24 py-20 md:py-28">
             <Reveal>
               <p className="text-2xs tracking-caps uppercase text-muted mb-14">
                 Ils nous font confiance
