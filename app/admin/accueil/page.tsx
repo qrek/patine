@@ -5,7 +5,7 @@ import ImageUpload from '@/components/ImageUpload'
 import RichTextEditor from '@/components/RichTextEditor'
 
 interface InstagramPhoto { id: string; src: string; caption?: string }
-interface Paragraph { id: string; text: string }
+interface Client { id: string; name: string; logo: string }
 interface HomeContent {
   hero: { title: string; subtitle: string; subtitleSize: number; titleColor: string; titleSize: number; titleWeight: number; image: string }
   intro: {
@@ -17,7 +17,7 @@ interface HomeContent {
     align: 'left' | 'center'
     quoted: boolean
   }
-  paragraphs: Paragraph[]
+  clients: Client[]
   instagramFeed: InstagramPhoto[]
 }
 
@@ -27,11 +27,7 @@ const DEFAULT: HomeContent = {
     column1: '', column2: '',
     size: 96, font: 'power', italic: false, align: 'center', quoted: false,
   },
-  paragraphs: [
-    { id: 'p1', text: '' },
-    { id: 'p2', text: '' },
-    { id: 'p3', text: '' },
-  ],
+  clients: [],
   instagramFeed: [],
 }
 
@@ -44,13 +40,10 @@ export default function AdminAccueil() {
     fetch('/api/admin/get?section=home')
       .then((r) => r.json())
       .then((d) => {
-        const paras: Paragraph[] = Array.isArray(d.paragraphs) && d.paragraphs.length === 3
-          ? d.paragraphs
-          : DEFAULT.paragraphs
         setContent({
           hero: { ...DEFAULT.hero, ...d.hero, titleColor: d.hero?.titleColor ?? '#F5F3EF', titleSize: d.hero?.titleSize ?? 9, titleWeight: d.hero?.titleWeight ?? 400 },
           intro: { ...DEFAULT.intro, ...d.intro },
-          paragraphs: paras,
+          clients: Array.isArray(d.clients) ? d.clients : [],
           instagramFeed: d.instagramFeed ?? [],
         })
       })
@@ -77,11 +70,32 @@ export default function AdminAccueil() {
   const setIntro = <K extends keyof HomeContent['intro']>(field: K, value: HomeContent['intro'][K]) =>
     setContent((c) => ({ ...c, intro: { ...c.intro, [field]: value } }))
 
-  const setParagraph = (i: number, text: string) =>
+  // Clients
+  function addClient() {
     setContent((c) => ({
       ...c,
-      paragraphs: c.paragraphs.map((p, idx) => idx === i ? { ...p, text } : p),
+      clients: [...c.clients, { id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, name: '', logo: '' }],
     }))
+  }
+  function updateClient(id: string, field: 'name' | 'logo', value: string) {
+    setContent((c) => ({
+      ...c,
+      clients: c.clients.map((cl) => cl.id === id ? { ...cl, [field]: value } : cl),
+    }))
+  }
+  function removeClient(id: string) {
+    setContent((c) => ({ ...c, clients: c.clients.filter((cl) => cl.id !== id) }))
+  }
+  function moveClient(id: string, dir: -1 | 1) {
+    setContent((c) => {
+      const idx = c.clients.findIndex((cl) => cl.id === id)
+      const next = idx + dir
+      if (idx < 0 || next < 0 || next >= c.clients.length) return c
+      const arr = [...c.clients]
+      ;[arr[idx], arr[next]] = [arr[next], arr[idx]]
+      return { ...c, clients: arr }
+    })
+  }
 
   // Instagram feed
   async function addInstaPhoto(e: React.ChangeEvent<HTMLInputElement>) {
@@ -328,22 +342,72 @@ export default function AdminAccueil() {
           </div>
         </section>
 
-        {/* ── 3 paragraphes (sous l'intro) ── */}
+        {/* ── Ils nous font confiance (clients) ── */}
         <section className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
-          <h2 className="text-[13px] font-medium text-gray-700 border-b border-gray-100 pb-3">Trois paragraphes courts</h2>
-          <p className="text-[12px] text-gray-400 -mt-2">Affichés en triptyque (remplace le bandeau des 3 photos). Gardez chaque paragraphe court (1–2 lignes).</p>
-          {content.paragraphs.map((p, i) => (
-            <div key={p.id}>
-              <label className="block text-[11px] text-gray-400 mb-1.5">Paragraphe {i + 1}</label>
-              <textarea
-                value={p.text}
-                onChange={(e) => setParagraph(i, e.target.value)}
-                rows={2}
-                className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-gray-400 resize-none leading-relaxed"
-                placeholder="Une phrase courte et stylée…"
-              />
+          <h2 className="text-[13px] font-medium text-gray-700 border-b border-gray-100 pb-3">Ils nous font confiance</h2>
+          <p className="text-[12px] text-gray-400 -mt-2">
+            Logos des clients affichés sous l'intro. Si aucun logo n'est fourni, le nom est affiché en lettres élégantes.
+          </p>
+
+          {content.clients.length > 0 && (
+            <div className="space-y-3">
+              {content.clients.map((client, i) => (
+                <div key={client.id} className="flex items-start gap-3 border border-gray-100 rounded p-3">
+                  {/* Logo */}
+                  <div className="w-24 flex-shrink-0">
+                    <ImageUpload
+                      value={client.logo}
+                      onChange={(url) => updateClient(client.id, 'logo', url)}
+                      destination={`clients-${client.id}`}
+                    />
+                  </div>
+
+                  {/* Nom + actions */}
+                  <div className="flex-1 space-y-2">
+                    <input
+                      type="text"
+                      placeholder="Nom du client"
+                      value={client.name}
+                      onChange={(e) => updateClient(client.id, 'name', e.target.value)}
+                      className="w-full border border-gray-200 rounded px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-gray-400"
+                    />
+                    <p className="text-[10px] text-gray-300">
+                      Le logo s'affiche en niveaux de gris ; au survol, il revient en couleur.
+                    </p>
+                  </div>
+
+                  {/* Réordonner / supprimer */}
+                  <div className="flex flex-col gap-1 flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => moveClient(client.id, -1)}
+                      disabled={i === 0}
+                      className="text-xs px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-30 transition-colors"
+                    >↑</button>
+                    <button
+                      type="button"
+                      onClick={() => moveClient(client.id, 1)}
+                      disabled={i === content.clients.length - 1}
+                      className="text-xs px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-30 transition-colors"
+                    >↓</button>
+                    <button
+                      type="button"
+                      onClick={() => removeClient(client.id)}
+                      className="text-xs px-2 py-1 bg-red-50 text-red-400 rounded hover:bg-red-100 transition-colors mt-1"
+                    >✕</button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
+
+          <button
+            type="button"
+            onClick={addClient}
+            className="inline-flex items-center gap-2 text-[12px] text-gray-500 border border-gray-200 rounded px-4 py-2 hover:border-gray-400 transition-colors"
+          >
+            + Ajouter un client
+          </button>
         </section>
 
         {/* ── Instagram feed ── */}

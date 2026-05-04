@@ -38,6 +38,7 @@ export interface HomeContent {
     quoted?: boolean
   }
   paragraphs?: { id: string; text: string }[]
+  clients?: { id: string; name: string; logo: string }[]
   instagramFeed?: InstagramPhoto[]
 }
 

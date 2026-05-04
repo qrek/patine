@@ -48,14 +48,8 @@ export default async function HomePage() {
     ? editorialRaw.slice(0, 220).trimEnd()
     : editorialRaw
 
-  // Paragraphes éditoriaux : valeurs par défaut si non remplies dans l'admin
-  const paragraphsDefault = [
-    { id: 'p1', text: 'Un travail d\'orfèvre, mené à la main, baguette après baguette.' },
-    { id: 'p2', text: 'Des matières nobles, choisies pour leur grain, leur tenue, leur lumière.' },
-    { id: 'p3', text: 'Une attention portée à chaque détail, du premier coup d\'œil à la pose finale.' },
-  ]
-  const savedParagraphs = (c.paragraphs ?? []).filter(p => p?.text?.trim())
-  const paragraphs = savedParagraphs.length > 0 ? savedParagraphs : paragraphsDefault
+  // Clients ("Ils nous font confiance")
+  const clients = (c.clients ?? []).filter(cl => cl?.name?.trim() || cl?.logo)
 
   return (
     <>
@@ -137,26 +131,39 @@ export default async function HomePage() {
         />
       )}
 
-      {/* ── 3 paragraphes éditoriaux ── */}
-      {paragraphs.length > 0 && (
+      {/* ── Ils nous font confiance ── */}
+      {clients.length > 0 && (
         <section className="bg-cream border-t border-border">
-          <div className="max-w-[1440px] mx-auto px-5 lg:px-12 py-24 md:py-32">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-14 gap-y-14">
-              {paragraphs.slice(0, 3).map((p, i) => (
-                <Reveal key={p.id} delay={i * 0.18} y={32}>
-                  <div className="flex flex-col items-start">
-                    <span className="font-power text-[11px] tracking-[0.32em] uppercase text-muted mb-6">
-                      — {String(i + 1).padStart(2, '0')}
-                    </span>
-                    <p className="font-cormorant italic text-[clamp(1.35rem,1.6vw,1.75rem)] text-noir leading-[1.45] tracking-[-0.005em] max-w-[34ch]">
-                      {p.text}
-                    </p>
+          <div className="max-w-[1440px] mx-auto px-5 lg:px-12 py-20 md:py-28">
+            <Reveal>
+              <p className="text-2xs tracking-caps uppercase text-muted text-center mb-14">
+                Ils nous font confiance
+              </p>
+            </Reveal>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-6 lg:gap-x-10 gap-y-12 items-center">
+              {clients.map((client, i) => (
+                <Reveal key={client.id} delay={(i % 5) * 0.08} y={20}>
+                  <div className="flex items-center justify-center h-20 group">
+                    {client.logo ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={client.logo}
+                        alt={client.name || ''}
+                        className="max-h-12 max-w-[140px] w-auto object-contain grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
+                      />
+                    ) : (
+                      <span className="font-cormorant italic text-lg text-noir-soft text-center group-hover:text-noir transition-colors duration-300">
+                        {client.name}
+                      </span>
+                    )}
                   </div>
                 </Reveal>
               ))}
             </div>
+
             {allPhotos.length > 0 && (
-              <Reveal delay={0.4} className="mt-16 pt-10 border-t border-border">
+              <Reveal delay={0.4} className="mt-16 pt-10 border-t border-border text-center">
                 <Link href="/realisations" className="text-2xs tracking-caps uppercase text-noir border-b border-noir pb-0.5 hover:text-muted hover:border-muted transition-colors duration-200">
                   Voir toutes les réalisations ↗
                 </Link>
