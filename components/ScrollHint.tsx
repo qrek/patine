@@ -5,10 +5,7 @@ import Link from 'next/link'
 
 export default function ScrollHint() {
   return (
-    <Link href="#intro" className="flex flex-col items-center gap-1.5 group" aria-label="Défiler">
-      <span className="text-[9px] tracking-[0.3em] uppercase text-cream/40 group-hover:text-cream/70 transition-colors duration-300">
-        Défiler
-      </span>
+    <Link href="#intro" className="flex flex-col items-center group" aria-label="Défiler">
       <motion.span
         className="text-cream/35 text-sm group-hover:text-cream/60 transition-colors duration-300 leading-none"
         animate={{ y: [0, 5, 0] }}
