@@ -48,7 +48,14 @@ export default async function HomePage() {
     ? editorialRaw.slice(0, 220).trimEnd()
     : editorialRaw
 
-  const paragraphs = (c.paragraphs ?? []).filter(p => p?.text?.trim())
+  // Paragraphes éditoriaux : valeurs par défaut si non remplies dans l'admin
+  const paragraphsDefault = [
+    { id: 'p1', text: 'Un travail d\'orfèvre, mené à la main, baguette après baguette.' },
+    { id: 'p2', text: 'Des matières nobles, choisies pour leur grain, leur tenue, leur lumière.' },
+    { id: 'p3', text: 'Une attention portée à chaque détail, du premier coup d\'œil à la pose finale.' },
+  ]
+  const savedParagraphs = (c.paragraphs ?? []).filter(p => p?.text?.trim())
+  const paragraphs = savedParagraphs.length > 0 ? savedParagraphs : paragraphsDefault
 
   return (
     <>
