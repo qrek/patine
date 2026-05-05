@@ -12,6 +12,15 @@ function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as ContactPayload
@@ -36,27 +45,33 @@ export async function POST(req: NextRequest) {
       // Ex: RESEND_FROM="Patine <noreply@patine.fr>"
       const fromAddress = process.env.RESEND_FROM || 'onboarding@resend.dev'
 
+      const safeName    = escapeHtml(body.name)
+      const safeEmail   = escapeHtml(body.email)
+      const safePhone   = body.phone ? escapeHtml(body.phone) : ''
+      const safeMessage = escapeHtml(body.message)
+
       await resend.emails.send({
         from: fromAddress,
         to: contactEmail,
-        reply_to: body.email,
+        replyTo: body.email,
         subject: `Nouveau message de ${body.name}`,
+        text: `Nouveau message via le site Patine\n\nNom : ${body.name}\nEmail : ${body.email}${body.phone ? `\nTéléphone : ${body.phone}` : ''}\n\n${body.message}\n`,
         html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #1A1A18;">Nouveau message via le site Patine</h2>
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
                 <td style="padding: 8px 0; color: #666; width: 120px;">Nom</td>
-                <td style="padding: 8px 0;">${body.name}</td>
+                <td style="padding: 8px 0;">${safeName}</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; color: #666;">Email</td>
-                <td style="padding: 8px 0;"><a href="mailto:${body.email}">${body.email}</a></td>
+                <td style="padding: 8px 0;"><a href="mailto:${safeEmail}">${safeEmail}</a></td>
               </tr>
-              ${body.phone ? `<tr><td style="padding: 8px 0; color: #666;">Téléphone</td><td style="padding: 8px 0;">${body.phone}</td></tr>` : ''}
+              ${safePhone ? `<tr><td style="padding: 8px 0; color: #666;">Téléphone</td><td style="padding: 8px 0;">${safePhone}</td></tr>` : ''}
             </table>
             <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-            <p style="white-space: pre-wrap; line-height: 1.7;">${body.message}</p>
+            <p style="white-space: pre-wrap; line-height: 1.7;">${safeMessage}</p>
           </div>
         `,
       })
