@@ -1,13 +1,29 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { getHome, getSavoirFaire, getRealisations } from '@/lib/content'
 import Reveal from '@/components/Reveal'
 import HeroParallax from '@/components/HeroParallax'
 import FloatingIntro from './FloatingIntro'
 import InstagramScroll from './InstagramScroll'
 import ScrollHint from '@/components/ScrollHint'
+import { BreadcrumbsJsonLd } from '@/components/JsonLd'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
+
+export const metadata: Metadata = {
+  title: { absolute: "Patine — Atelier d'encadrement à Paris" },
+  description:
+    "Patine, atelier d'encadrement artisanal à Paris 18e. Encadrement sur mesure pour œuvres d'art, photographies et objets — fabrication, mise en valeur et conservation.",
+  alternates: { canonical: '/' },
+  openGraph: {
+    title: "Patine — Atelier d'encadrement à Paris",
+    description:
+      "Encadrement artisanal sur mesure à Paris 18e — fabrication, mise en valeur et conservation.",
+    url: 'https://atelier-patine.fr/',
+    type: 'website',
+  },
+}
 
 // Mélange Fisher–Yates
 function shuffle<T>(arr: T[]): T[] {
@@ -63,6 +79,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <BreadcrumbsJsonLd items={[{ name: 'Accueil', path: '/' }]} />
       {/* ── Hero ── */}
       <section className="relative h-[88vh] flex flex-col overflow-hidden">
         {c.hero.image ? (
@@ -85,7 +102,7 @@ export default async function HomePage() {
               fontWeight: titleWeight,
             }}
           >
-            {c.hero.title || "L'art d'encadrer"}
+            {c.hero.title || "Atelier d'encadrement à Paris"}
           </h1>
           <div className="mt-5 flex items-end justify-between">
             <p className="tracking-caps uppercase text-cream/70 fade-in-2" style={{ fontSize: subtitleSize }}>
@@ -102,7 +119,7 @@ export default async function HomePage() {
         <section className="border-b border-border bg-cream overflow-hidden">
           <div className="px-5 lg:px-6 py-20 md:py-28 max-w-[1440px] mx-auto">
             <Reveal>
-              <p className="text-2xs tracking-caps uppercase text-muted mb-10">Notre Savoir-faire</p>
+              <h2 className="text-2xs tracking-caps uppercase text-muted mb-10 font-normal">Notre Savoir-faire</h2>
             </Reveal>
             <Reveal delay={0.15}>
               <p className="font-cormorant text-[clamp(1.9rem,3.8vw,4.2rem)] text-noir leading-[1.18] max-w-[1100px]">
@@ -146,9 +163,9 @@ export default async function HomePage() {
         <section className="bg-cream border-t border-border">
           <div className="w-full px-5 md:px-10 lg:px-16 xl:px-24 py-20 md:py-28">
             <Reveal>
-              <p className="text-2xs tracking-caps uppercase text-muted mb-14">
+              <h2 className="text-2xs tracking-caps uppercase text-muted mb-14 font-normal">
                 Ils nous font confiance
-              </p>
+              </h2>
             </Reveal>
 
             {/* Zone 1 : clients avec logo (mis en avant) */}

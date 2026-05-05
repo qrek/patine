@@ -1,9 +1,24 @@
 import Image from 'next/image'
+import type { Metadata } from 'next'
 import { getSettings } from '@/lib/content'
 import ContactForm from './ContactForm'
+import { BreadcrumbsJsonLd } from '@/components/JsonLd'
 
-export const dynamic = 'force-dynamic'
-export const metadata = { title: 'Contact — Patine' }
+export const revalidate = 3600
+
+export const metadata: Metadata = {
+  title: 'Contact',
+  description:
+    "Contactez l'atelier Patine pour vos projets d'encadrement sur mesure à Paris. Atelier au 83 rue Lamarck, Paris 18e — devis et conseils personnalisés.",
+  alternates: { canonical: '/contact' },
+  openGraph: {
+    title: 'Contact — Atelier Patine',
+    description:
+      "Atelier d'encadrement à Paris 18e. Demandez un devis ou prenez rendez-vous.",
+    url: 'https://atelier-patine.fr/contact',
+    type: 'website',
+  },
+}
 
 export default async function ContactPage() {
   const s = await getSettings()
@@ -11,6 +26,12 @@ export default async function ContactPage() {
 
   return (
     <div className="pt-14 min-h-[calc(100vh-3.5rem)] flex flex-col md:flex-row">
+      <BreadcrumbsJsonLd
+        items={[
+          { name: 'Accueil', path: '/' },
+          { name: 'Contact', path: '/contact' },
+        ]}
+      />
 
       {/* ── Image (panneau gauche) ── */}
       {hasImage && (

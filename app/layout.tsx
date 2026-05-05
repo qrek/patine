@@ -21,14 +21,61 @@ const cormorant = Cormorant_Garamond({
 })
 
 export const metadata: Metadata = {
-  title: 'Patine — Atelier d\'encadrement artisanal à Paris',
-  description: 'Patine est un studio d\'encadrement artisanal haut de gamme à Paris. Baguettes en bois massif, passepartouts muséaux, verres conservation UV.',
+  metadataBase: new URL('https://atelier-patine.fr'),
+  title: {
+    default: "Patine — Atelier d'encadrement à Paris",
+    template: '%s — Patine, atelier d\'encadrement à Paris',
+  },
+  description:
+    "Patine, atelier d'encadrement artisanal à Paris 18e. Encadrement sur mesure, mise en valeur et conservation d'œuvres d'art, photographies et objets précieux.",
+  keywords: [
+    'encadrement Paris',
+    'atelier encadrement',
+    'encadreur Paris',
+    'encadrement sur mesure',
+    'encadrement artisanal',
+    'encadrement œuvre d\'art',
+    'patine',
+    'cadres sur mesure Paris',
+    'conservation œuvre d\'art',
+    'passepartout',
+    'baguette bois',
+    'Paris 18',
+  ],
+  applicationName: 'Patine',
+  authors: [{ name: 'Atelier Patine' }],
+  creator: 'Atelier Patine',
+  publisher: 'Atelier Patine',
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
-    title: 'Patine — Atelier d\'encadrement artisanal à Paris',
-    description: 'Encadrement artisanal haut de gamme à Paris',
+    title: "Patine — Atelier d'encadrement à Paris",
+    description:
+      "Atelier d'encadrement artisanal à Paris 18e — fabrication sur mesure, mise en valeur et conservation.",
+    url: 'https://atelier-patine.fr',
+    siteName: 'Patine',
     locale: 'fr_FR',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Patine — Atelier d'encadrement à Paris",
+    description:
+      "Atelier d'encadrement artisanal à Paris 18e — sur mesure, mise en valeur, conservation.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
+  category: 'Artisanat',
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
