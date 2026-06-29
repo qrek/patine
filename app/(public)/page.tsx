@@ -170,7 +170,7 @@ export default async function HomePage() {
 
             {/* Zone 1 : clients avec logo (mis en avant) */}
             {logoClients.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-10 lg:gap-x-16 gap-y-20 items-center">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-6 sm:gap-x-10 lg:gap-x-16 gap-y-16 sm:gap-y-20 items-center">
                 {logoClients.map((client, i) => {
                   const href = normalizeUrl(client.url)
                   const inner = (
@@ -178,7 +178,7 @@ export default async function HomePage() {
                     <img
                       src={client.logo}
                       alt={client.name || ''}
-                      className="max-h-24 lg:max-h-28 max-w-[240px] lg:max-w-[280px] w-auto object-contain grayscale opacity-65 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
+                      className="max-h-24 lg:max-h-28 max-w-full sm:max-w-[220px] lg:max-w-[280px] w-auto object-contain grayscale opacity-65 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
                     />
                   )
                   return (

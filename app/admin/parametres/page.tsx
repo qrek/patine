@@ -12,6 +12,7 @@ interface Settings {
   hours: string
   footer: string
   logo: { src: string; srcDark: string; width: number }
+  menu: { savoirFaire: string; realisations: string; contact: string }
 }
 
 const DEFAULT: Settings = {
@@ -23,6 +24,7 @@ const DEFAULT: Settings = {
   hours: '',
   footer: '© 2025 Patine',
   logo: { src: '', srcDark: '', width: 100 },
+  menu: { savoirFaire: 'Notre Savoir-faire', realisations: 'Nos Réalisations', contact: 'Contact' },
 }
 
 export default function AdminParametres() {
@@ -32,7 +34,13 @@ export default function AdminParametres() {
   useEffect(() => {
     fetch('/api/admin/get?section=settings')
       .then((r) => r.json())
-      .then((d) => setSettings({ ...DEFAULT, ...d, linkedin: d.linkedin ?? '', hours: d.hours ?? '', logo: { ...DEFAULT.logo, ...(d.logo ?? {}) } as Settings['logo'] }))
+      .then((d) => setSettings({
+        ...DEFAULT, ...d,
+        linkedin: d.linkedin ?? '',
+        hours:    d.hours ?? '',
+        logo:     { ...DEFAULT.logo, ...(d.logo ?? {}) } as Settings['logo'],
+        menu:     { ...DEFAULT.menu, ...(d.menu ?? {}) } as Settings['menu'],
+      }))
       .catch(() => {})
   }, [])
 
@@ -58,6 +66,8 @@ export default function AdminParametres() {
     setSettings((s) => ({ ...s, address: { ...s.address, [field]: value } }))
   const setLogo = (field: keyof Settings['logo'], value: string | number) =>
     setSettings((s) => ({ ...s, logo: { ...s.logo, [field]: value } }))
+  const setMenu = (field: keyof Settings['menu'], value: string) =>
+    setSettings((s) => ({ ...s, menu: { ...s.menu, [field]: value } }))
 
   return (
     <div className="max-w-xl">
@@ -214,6 +224,33 @@ export default function AdminParametres() {
           <p className="text-[11px] text-gray-400">S'affiche en bandeau pleine largeur sous le titre de la page contact.</p>
           {/* @ts-expect-error contactImage added dynamically */}
           <ImageUpload value={settings.contactImage ?? ''} onChange={(url) => setSettings((s) => ({ ...s, contactImage: url }))} destination="contact" />
+        </section>
+
+        {/* Libellés du menu */}
+        <section className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
+          <h2 className="text-sm font-medium text-gray-700 border-b border-gray-100 pb-3">Libellés du menu</h2>
+          <p className="text-[11px] text-gray-400 -mt-1">Le texte affiché dans la barre de navigation pour chaque page.</p>
+          <div>
+            <label className="block text-xs text-gray-500 mb-1.5">Page Savoir-faire</label>
+            <input type="text" value={settings.menu.savoirFaire}
+              onChange={(e) => setMenu('savoirFaire', e.target.value)}
+              placeholder="Notre Savoir-faire"
+              className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#B8A87A] transition-colors" />
+          </div>
+          <div>
+            <label className="block text-xs text-gray-500 mb-1.5">Page Réalisations</label>
+            <input type="text" value={settings.menu.realisations}
+              onChange={(e) => setMenu('realisations', e.target.value)}
+              placeholder="Nos Réalisations"
+              className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#B8A87A] transition-colors" />
+          </div>
+          <div>
+            <label className="block text-xs text-gray-500 mb-1.5">Page Contact</label>
+            <input type="text" value={settings.menu.contact}
+              onChange={(e) => setMenu('contact', e.target.value)}
+              placeholder="Contact"
+              className="w-full border border-gray-200 rounded px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-[#B8A87A] transition-colors" />
+          </div>
         </section>
 
         {/* Footer */}

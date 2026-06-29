@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
       await resend.emails.send({
         from: fromAddress,
         to: contactEmail,
-        replyTo: body.email,
+        reply_to: body.email,
         subject: `Nouveau message de ${body.name}`,
         text: `Nouveau message via le site Patine\n\nNom : ${body.name}\nEmail : ${body.email}${body.phone ? `\nTéléphone : ${body.phone}` : ''}\n\n${body.message}\n`,
         html: `

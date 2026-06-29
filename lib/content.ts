@@ -84,6 +84,7 @@ export interface SettingsContent {
   footer: string
   logo: { src: string; srcDark: string; width: number }
   contactImage?: string
+  menu?: { savoirFaire?: string; realisations?: string; contact?: string }
 }
 
 // ─── Helpers locaux ───────────────────────────────────────────────────────────
@@ -177,6 +178,7 @@ const settingsDefault: SettingsContent = {
   hours: '',
   footer: '© 2025 Patine',
   logo: { src: '', srcDark: '', width: 100 },
+  menu: { savoirFaire: 'Notre Savoir-faire', realisations: 'Nos Réalisations', contact: 'Contact' },
 }
 
 // ─── Getters ──────────────────────────────────────────────────────────────────

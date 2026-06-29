@@ -4,19 +4,26 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-const links = [
-  { href: '/savoir-faire', label: 'Notre Savoir-faire' },
-  { href: '/realisations',  label: 'Réalisations' },
-  { href: '/contact',       label: 'Contact' },
-]
+interface MenuLabels {
+  savoirFaire?: string
+  realisations?: string
+  contact?: string
+}
 
 interface NavProps {
   logoSrc?:     string
   logoSrcDark?: string
   logoWidth?:   number
+  menu?:        MenuLabels
 }
 
-export default function Nav({ logoSrc = '', logoSrcDark = '', logoWidth = 100 }: NavProps) {
+export default function Nav({ logoSrc = '', logoSrcDark = '', logoWidth = 100, menu }: NavProps) {
+  const links = [
+    { href: '/savoir-faire', label: menu?.savoirFaire?.trim() || 'Notre Savoir-faire' },
+    { href: '/realisations',  label: menu?.realisations?.trim() || 'Nos Réalisations' },
+    { href: '/contact',       label: menu?.contact?.trim()     || 'Contact' },
+  ]
+
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const pathname    = usePathname()
