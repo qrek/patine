@@ -36,52 +36,69 @@ export async function POST(req: NextRequest) {
     const settings = await getSettings()
     const contactEmail = process.env.CONTACT_EMAIL || settings.email
 
-    // ── Option A : Resend (si RESEND_API_KEY est défini) ─────────────────────
-    if (process.env.RESEND_API_KEY && contactEmail) {
-      const { Resend } = await import('resend')
-      const resend = new Resend(process.env.RESEND_API_KEY)
-
-      // RESEND_FROM doit être une adresse sur un domaine vérifié dans Resend
-      // Ex: RESEND_FROM="Patine <noreply@patine.fr>"
-      const fromAddress = process.env.RESEND_FROM || 'onboarding@resend.dev'
-
-      const safeName    = escapeHtml(body.name)
-      const safeEmail   = escapeHtml(body.email)
-      const safePhone   = body.phone ? escapeHtml(body.phone) : ''
-      const safeMessage = escapeHtml(body.message)
-
-      await resend.emails.send({
-        from: fromAddress,
-        to: contactEmail,
-        reply_to: body.email,
-        subject: `Nouveau message de ${body.name}`,
-        text: `Nouveau message via le site Patine\n\nNom : ${body.name}\nEmail : ${body.email}${body.phone ? `\nTéléphone : ${body.phone}` : ''}\n\n${body.message}\n`,
-        html: `
-          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #1A1A18;">Nouveau message via le site Patine</h2>
-            <table style="width: 100%; border-collapse: collapse;">
-              <tr>
-                <td style="padding: 8px 0; color: #666; width: 120px;">Nom</td>
-                <td style="padding: 8px 0;">${safeName}</td>
-              </tr>
-              <tr>
-                <td style="padding: 8px 0; color: #666;">Email</td>
-                <td style="padding: 8px 0;"><a href="mailto:${safeEmail}">${safeEmail}</a></td>
-              </tr>
-              ${safePhone ? `<tr><td style="padding: 8px 0; color: #666;">Téléphone</td><td style="padding: 8px 0;">${safePhone}</td></tr>` : ''}
-            </table>
-            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-            <p style="white-space: pre-wrap; line-height: 1.7;">${safeMessage}</p>
-          </div>
-        `,
-      })
-
-      return NextResponse.json({ success: true })
+    if (!process.env.RESEND_API_KEY) {
+      console.error('[contact] RESEND_API_KEY non défini en environnement')
+      return NextResponse.json({
+        error: 'Service email non configuré',
+        details: 'RESEND_API_KEY manquant sur le serveur (variable d\'environnement)',
+      }, { status: 503 })
+    }
+    if (!contactEmail) {
+      console.error('[contact] Aucun destinataire — ni CONTACT_EMAIL ni settings.email')
+      return NextResponse.json({
+        error: 'Service email non configuré',
+        details: 'Aucune adresse destinataire (CONTACT_EMAIL ou paramètres > email)',
+      }, { status: 503 })
     }
 
-    // ── Fallback : aucun service email configuré ──────────────────────────────
-    console.error('[contact] RESEND_API_KEY non configuré — message non envoyé:', body)
-    return NextResponse.json({ error: 'Service email non configuré' }, { status: 503 })
+    const { Resend } = await import('resend')
+    const resend = new Resend(process.env.RESEND_API_KEY)
+
+    // RESEND_FROM doit être une adresse sur un domaine vérifié dans Resend
+    // Ex: RESEND_FROM="Patine <noreply@patine.fr>"
+    const fromAddress = process.env.RESEND_FROM || 'onboarding@resend.dev'
+
+    const safeName    = escapeHtml(body.name)
+    const safeEmail   = escapeHtml(body.email)
+    const safePhone   = body.phone ? escapeHtml(body.phone) : ''
+    const safeMessage = escapeHtml(body.message)
+
+    const { data, error } = await resend.emails.send({
+      from: fromAddress,
+      to: contactEmail,
+      reply_to: body.email,
+      subject: `Nouveau message de ${body.name}`,
+      text: `Nouveau message via le site Patine\n\nNom : ${body.name}\nEmail : ${body.email}${body.phone ? `\nTéléphone : ${body.phone}` : ''}\n\n${body.message}\n`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #1A1A18;">Nouveau message via le site Patine</h2>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 8px 0; color: #666; width: 120px;">Nom</td>
+              <td style="padding: 8px 0;">${safeName}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: #666;">Email</td>
+              <td style="padding: 8px 0;"><a href="mailto:${safeEmail}">${safeEmail}</a></td>
+            </tr>
+            ${safePhone ? `<tr><td style="padding: 8px 0; color: #666;">Téléphone</td><td style="padding: 8px 0;">${safePhone}</td></tr>` : ''}
+          </table>
+          <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+          <p style="white-space: pre-wrap; line-height: 1.7;">${safeMessage}</p>
+        </div>
+      `,
+    })
+
+    if (error) {
+      console.error('[contact] Resend a renvoyé une erreur :', error)
+      return NextResponse.json({
+        error: 'L\'envoi a échoué',
+        details: error.message || error.name || 'erreur Resend inconnue',
+      }, { status: 502 })
+    }
+
+    console.log('[contact] Envoyé à', contactEmail, '— id Resend:', data?.id)
+    return NextResponse.json({ success: true })
   } catch (err) {
     console.error('[contact] Error:', err)
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })

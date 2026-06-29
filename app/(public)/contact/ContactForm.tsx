@@ -3,11 +3,13 @@
 import { useState, FormEvent } from 'react'
 
 export default function ContactForm() {
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [status, setStatus]     = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [errorMsg, setErrorMsg] = useState<string>('')
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setStatus('sending')
+    setErrorMsg('')
     const form = e.currentTarget
     const data = {
       name:    (form.elements.namedItem('name')    as HTMLInputElement).value,
@@ -21,9 +23,21 @@ export default function ContactForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       })
-      setStatus(res.ok ? 'sent' : 'error')
-      if (res.ok) form.reset()
-    } catch {
+      if (res.ok) {
+        setStatus('sent')
+        form.reset()
+        return
+      }
+      // Récupère le message d'erreur précis renvoyé par l'API
+      let serverMsg = ''
+      try {
+        const j = await res.json() as { error?: string; details?: string }
+        serverMsg = [j.error, j.details].filter(Boolean).join(' — ')
+      } catch {}
+      setErrorMsg(serverMsg || `Erreur ${res.status}`)
+      setStatus('error')
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'Erreur réseau')
       setStatus('error')
     }
   }
@@ -61,7 +75,9 @@ export default function ContactForm() {
         <p className="text-[13px] text-muted">Message envoyé — nous reviendrons vers vous rapidement.</p>
       )}
       {status === 'error' && (
-        <p className="text-[13px] text-red-500/60">Une erreur est survenue. Écrivez-nous directement.</p>
+        <p className="text-[13px] text-red-500/70">
+          Une erreur est survenue{errorMsg ? ` : ${errorMsg}` : '.'} Écrivez-nous directement.
+        </p>
       )}
     </form>
   )
