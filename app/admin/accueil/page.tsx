@@ -346,75 +346,93 @@ export default function AdminAccueil() {
         <section className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
           <h2 className="text-[13px] font-medium text-gray-700 border-b border-gray-100 pb-3">Ils nous font confiance</h2>
           <p className="text-[12px] text-gray-400 -mt-2">
-            Logos des clients affichés sous l'intro. Si aucun logo n'est fourni, le nom est affiché en lettres élégantes.
+            <span className="font-medium text-gray-600">Avec logo</span> : affiché dans la grille du haut.
+            {' '}<span className="font-medium text-gray-600">Sans logo</span> : nom seul en lettres élégantes, centré sous la grille.
           </p>
 
           {content.clients.length > 0 && (
             <div className="space-y-3">
-              {content.clients.map((client, i) => (
-                <div key={client.id} className="flex items-start gap-3 border border-gray-100 rounded p-3">
-                  {/* Logo */}
-                  <div className="w-24 flex-shrink-0">
-                    <ImageUpload
-                      value={client.logo}
-                      onChange={(url) => updateClient(client.id, 'logo', url)}
-                      destination={`clients-${client.id}`}
-                    />
-                  </div>
+              {content.clients.map((client, i) => {
+                const hasLogo = Boolean(client.logo)
+                return (
+                  <div key={client.id} className="flex items-start gap-3 border border-gray-100 rounded p-3">
+                    {/* Logo */}
+                    <div className="w-24 flex-shrink-0">
+                      <ImageUpload
+                        value={client.logo}
+                        onChange={(url) => updateClient(client.id, 'logo', url)}
+                        destination={`clients-${client.id}`}
+                      />
+                    </div>
 
-                  {/* Nom + URL + actions */}
-                  <div className="flex-1 space-y-2">
-                    <input
-                      type="text"
-                      placeholder="Nom du client"
-                      value={client.name}
-                      onChange={(e) => updateClient(client.id, 'name', e.target.value)}
-                      className="w-full border border-gray-200 rounded px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-gray-400"
-                    />
-                    <input
-                      type="url"
-                      placeholder="Site web (https://…) — optionnel"
-                      value={client.url ?? ''}
-                      onChange={(e) => updateClient(client.id, 'url', e.target.value)}
-                      className="w-full border border-gray-200 rounded px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-gray-400"
-                    />
-                    <p className="text-[10px] text-gray-300">
-                      Avec logo : affiché dans la grille du haut. Sans logo : listé en dessous. Cliquable si une URL est fournie.
-                    </p>
-                  </div>
+                    {/* Nom + URL + badge */}
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          placeholder="Nom du client"
+                          value={client.name}
+                          onChange={(e) => updateClient(client.id, 'name', e.target.value)}
+                          className="flex-1 border border-gray-200 rounded px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-gray-400"
+                        />
+                        <span
+                          className={`inline-flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium whitespace-nowrap ${
+                            hasLogo
+                              ? 'bg-amber-50 text-amber-700 border border-amber-100'
+                              : 'bg-gray-50 text-gray-500 border border-gray-100'
+                          }`}
+                          title={hasLogo ? 'Sera affiché dans la grille des logos en haut.' : 'Sera affiché en nom seul, centré sous la grille.'}
+                        >
+                          {hasLogo ? '◧ Grille' : '⋯ Nom seul'}
+                        </span>
+                      </div>
+                      <input
+                        type="url"
+                        placeholder="Site web (https://…) — optionnel, rend le client cliquable"
+                        value={client.url ?? ''}
+                        onChange={(e) => updateClient(client.id, 'url', e.target.value)}
+                        className="w-full border border-gray-200 rounded px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-gray-400"
+                      />
+                    </div>
 
-                  {/* Réordonner / supprimer */}
-                  <div className="flex flex-col gap-1 flex-shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => moveClient(client.id, -1)}
-                      disabled={i === 0}
-                      className="text-xs px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-30 transition-colors"
-                    >↑</button>
-                    <button
-                      type="button"
-                      onClick={() => moveClient(client.id, 1)}
-                      disabled={i === content.clients.length - 1}
-                      className="text-xs px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-30 transition-colors"
-                    >↓</button>
-                    <button
-                      type="button"
-                      onClick={() => removeClient(client.id)}
-                      className="text-xs px-2 py-1 bg-red-50 text-red-400 rounded hover:bg-red-100 transition-colors mt-1"
-                    >✕</button>
+                    {/* Réordonner / supprimer */}
+                    <div className="flex flex-col gap-1 flex-shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => moveClient(client.id, -1)}
+                        disabled={i === 0}
+                        className="text-xs px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-30 transition-colors"
+                      >↑</button>
+                      <button
+                        type="button"
+                        onClick={() => moveClient(client.id, 1)}
+                        disabled={i === content.clients.length - 1}
+                        className="text-xs px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-30 transition-colors"
+                      >↓</button>
+                      <button
+                        type="button"
+                        onClick={() => removeClient(client.id)}
+                        className="text-xs px-2 py-1 bg-red-50 text-red-400 rounded hover:bg-red-100 transition-colors mt-1"
+                      >✕</button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
 
-          <button
-            type="button"
-            onClick={addClient}
-            className="inline-flex items-center gap-2 text-[12px] text-gray-500 border border-gray-200 rounded px-4 py-2 hover:border-gray-400 transition-colors"
-          >
-            + Ajouter un client
-          </button>
+          <div className="flex flex-wrap gap-2 pt-1">
+            <button
+              type="button"
+              onClick={addClient}
+              className="inline-flex items-center gap-2 text-[12px] text-gray-500 border border-gray-200 rounded px-4 py-2 hover:border-gray-400 transition-colors"
+            >
+              + Ajouter un client
+            </button>
+            <span className="text-[11px] text-gray-300 self-center">
+              (laissez le logo vide → bascule automatiquement en "Nom seul")
+            </span>
+          </div>
         </section>
 
         {/* ── Instagram feed ── */}
