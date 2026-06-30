@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import type { Metadata } from 'next'
 import { getSettings } from '@/lib/content'
-import ContactForm from './ContactForm'
 import { BreadcrumbsJsonLd } from '@/components/JsonLd'
 
 export const revalidate = 3600
@@ -55,45 +54,48 @@ export default async function ContactPage() {
           <h1 className="font-power text-5xl md:text-6xl lg:text-7xl text-noir leading-none">Contact</h1>
         </div>
 
-        {/* Grille : infos | formulaire */}
-        <div className="grid md:grid-cols-2 gap-10 lg:gap-16">
+        {/* CTA email mis en avant + infos atelier */}
+        <div className="space-y-12 lg:space-y-16">
 
-          {/* Infos atelier */}
-          <div className="space-y-7">
-            {(s.address.street || s.address.city) && (
-              <div>
-                <p className="text-2xs tracking-caps uppercase text-muted mb-2">Adresse</p>
-                <p className="text-[15px] text-noir leading-relaxed">
-                  {s.address.street && <span className="block">{s.address.street}</span>}
-                  {s.address.city   && <span className="block">{s.address.city}</span>}
-                </p>
-              </div>
-            )}
+          {/* Bloc principal : email en CTA */}
+          {s.email && (
+            <div>
+              <p className="text-2xs tracking-caps uppercase text-muted mb-5">Votre projet</p>
+              <p className="text-[15px] text-noir-soft leading-relaxed max-w-[460px] mb-7">
+                Pour toute demande d&apos;encadrement, partagez-nous votre projet par email — nous vous répondons sous 48 h.
+              </p>
+              <a
+                href={`mailto:${s.email}`}
+                className="inline-block font-power text-3xl md:text-4xl lg:text-5xl text-noir leading-none border-b border-noir pb-1 hover:text-muted hover:border-muted transition-colors duration-200 break-all"
+              >
+                {s.email}
+              </a>
+            </div>
+          )}
 
-            {s.email && (
-              <div>
-                <p className="text-2xs tracking-caps uppercase text-muted mb-2">Email</p>
-                <a href={`mailto:${s.email}`} className="text-[15px] text-noir hover:text-muted transition-colors duration-200">
-                  {s.email}
-                </a>
-              </div>
-            )}
+          {/* Infos secondaires : adresse + téléphone */}
+          {(s.address.street || s.address.city || s.phone) && (
+            <div className="grid sm:grid-cols-2 gap-8 lg:gap-12 pt-10 border-t border-border">
+              {(s.address.street || s.address.city) && (
+                <div>
+                  <p className="text-2xs tracking-caps uppercase text-muted mb-2">Adresse</p>
+                  <p className="text-[15px] text-noir leading-relaxed">
+                    {s.address.street && <span className="block">{s.address.street}</span>}
+                    {s.address.city   && <span className="block">{s.address.city}</span>}
+                  </p>
+                </div>
+              )}
 
-            {s.phone && (
-              <div>
-                <p className="text-2xs tracking-caps uppercase text-muted mb-2">Téléphone</p>
-                <a href={`tel:${s.phone.replace(/\s/g,'')}`} className="text-[15px] text-noir hover:text-muted transition-colors duration-200">
-                  {s.phone}
-                </a>
-              </div>
-            )}
-          </div>
-
-          {/* Formulaire */}
-          <div>
-            <p className="text-2xs tracking-caps uppercase text-muted mb-8">Votre projet</p>
-            <ContactForm />
-          </div>
+              {s.phone && (
+                <div>
+                  <p className="text-2xs tracking-caps uppercase text-muted mb-2">Téléphone</p>
+                  <a href={`tel:${s.phone.replace(/\s/g,'')}`} className="text-[15px] text-noir hover:text-muted transition-colors duration-200">
+                    {s.phone}
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
 
         </div>
       </div>
